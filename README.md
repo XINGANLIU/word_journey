@@ -8,7 +8,18 @@
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
 </p>
 
-> 一套代码，Windows + Android 双端运行。内置 3 万词汇、间隔重复算法、听写模式、词根词缀分析。
+> **English** | A cross-platform vocabulary trainer built with Flutter. 30,000+ words, SM-2 spaced repetition, dictation mode, word root analysis. Runs on Windows & Android.
+>
+> **中文** | Flutter 跨平台背单词应用。内置 3 万词汇、间隔重复算法、听写模式、词根词缀分析。
+
+<p align="center">
+  <img src="screenshots/review.png" width="24%" alt="复习">
+  <img src="screenshots/books.png" width="24%" alt="词书">
+  <img src="screenshots/dictation.png" width="24%" alt="听写">
+  <img src="screenshots/stats.png" width="24%" alt="统计">
+  <br>
+  <sup>⬆ 截图占位，运行后替换为实际截图</sup>
+</p>
 
 ---
 
