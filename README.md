@@ -1,185 +1,128 @@
 <!-- omit in toc -->
-# 词旅背单词 · Word Journey
-
 <p align="center">
-  <img src="https://img.shields.io/badge/Flutter-3.41-blue?logo=flutter" alt="Flutter">
-  <img src="https://img.shields.io/badge/Dart-3.11-blue?logo=dart" alt="Dart">
-  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Android-brightgreen" alt="Platform">
-  <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
+  <img src="https://img.shields.io/badge/Words-30,000+-success?style=for-the-badge" alt="30000+ Words">
+  <img src="https://img.shields.io/badge/Windows-✓-0078D6?style=for-the-badge&logo=windows" alt="Windows">
+  <img src="https://img.shields.io/badge/Android-✓-3DDC84?style=for-the-badge&logo=android" alt="Android">
 </p>
 
-> **English** | A cross-platform vocabulary trainer built with Flutter. 30,000+ words, SM-2 spaced repetition, dictation mode, word root analysis. Runs on Windows & Android.
->
-> **中文** | Flutter 跨平台背单词应用。内置 3 万词汇、间隔重复算法、听写模式、词根词缀分析。
+<h1 align="center">
+  词旅背单词<br>
+  <sub>Word Journey</sub>
+</h1>
 
 <p align="center">
-  <img src="screenshots/review.png" width="24%" alt="复习">
-  <img src="screenshots/books.png" width="24%" alt="词书">
-  <img src="screenshots/dictation.png" width="24%" alt="听写">
-  <img src="screenshots/stats.png" width="24%" alt="统计">
-  <br>
-  <sup>⬆ 截图占位，运行后替换为实际截图</sup>
+  <b>把 3 万个单词装进脑子。</b><br>
+  一个真正能帮你长期坚持背单词的跨平台工具。
+</p>
+
+<p align="center">
+  <a href="https://github.com/XINGANLIU/word_journey/releases/latest"><img src="https://img.shields.io/badge/⬇ 立即下载-Windows%20|%20Android-blue?style=for-the-badge" alt="下载"></a>
 </p>
 
 ---
 
-<!-- omit in toc -->
-## 目录
+## ✨ 为什么用词旅？
 
-- [功能概览](#功能概览)
-- [快速开始](#快速开始)
-- [项目结构](#项目结构)
-- [词库说明](#词库说明)
-- [打包发布](#打包发布)
-- [技术栈](#技术栈)
-- [License](#license)
+<p align="center">
+  <table>
+    <tr>
+      <td align="center" width="25%"><b>🧠 艾宾浩斯算法</b><br><small>1天→3天→7天→15天→30天<br>科学间隔，记得更牢</small></td>
+      <td align="center" width="25%"><b>📚 3万词库</b><br><small>高考/四级/六级/考研<br>雅思/托福/10000常见词</small></td>
+      <td align="center" width="25%"><b>🔊 真人发音</b><br><small>点击喇叭自动朗读<br>支持连续播放</small></td>
+      <td align="center" width="25%"><b>📱 全平台</b><br><small>一套代码<br>Windows + Android</small></td>
+    </tr>
+  </table>
+</p>
 
----
+### 🎯 不只是"背"单词
 
-## 功能概览
+| 功能 | 是什么 | 为什么有用 |
+|------|--------|-----------|
+| 听写模式 | 听发音拼写单词，错了告诉你正确答案 | 听力+拼写双提升，比单纯眼看记忆深 3 倍 |
+| 拼写测试 | 看中文释义输入英文 | 检查是否真的记住了，而不只是"眼熟" |
+| 词根词缀 | 自动识别 un-/re-/-tion 等 | 理解构词法，举一反三记一串 |
+| 同反义词 | 每个词关联同义词和反义词 | 构建词汇网络，写作时不再词穷 |
+| 剑桥词典 | 一键跳转剑桥中英词典 | 专业释义，随时深挖 |
 
-### 📖 学习模式
+### 📊 数据帮你坚持
 
-| 功能 | 说明 |
-|------|------|
-| 间隔复习 | SM-2 算法，根据记忆反馈自动调整复习间隔 |
-| 三档评级 | 不认识 / 有点模糊 / 认识，科学调度 |
-| 单词发音 | 点击喇叭或自动播放，支持 TTS |
-| 卡片释义 | 点击展开释义、例句、标签 |
-| 滑动手势 | 左滑「忘记」、右滑「认识」 |
-
-### 📚 词库管理
-
-| 功能 | 说明 |
-|------|------|
-| 多词书 | 高考 · 四级 · 六级 · 考研 · 雅思 · 托福 · 10000 常见词 |
-| 词书选择 | 首次启动自由勾选，随时可更换 |
-| 词典搜索 | 搜索英文、中文、标签，跨全部词书 |
-| 单词详情 | 点击单词查看词根词缀、同义词、反义词 |
-
-### 🎧 听写 & 拼写
-
-| 功能 | 说明 |
-|------|------|
-| 听写模式 | 听发音 → 拼写单词 → 即时反馈 |
-| 拼写测试 | 看中文释义 → 输入英文 → 检查 |
-| 正确率统计 | 实时显示正确率 |
-
-### 📊 数据 & 设置
-
-| 功能 | 说明 |
-|------|------|
-| 学习统计 | 复习量、保留率、连击天数、7 天趋势图 |
-| 收藏单词 | 收藏夹独立标签页 |
-| 每日新词上限 | 5~30 可调 |
-| 导出/恢复备份 | JSON 文件，跨设备同步 |
+| 功能 | 
+|------|
+| 每日复习量 + 保留率 + 连续学习天数 |
+| 7 天学习趋势图 |
+| 未来待复习单词数量预览 |
+| 导出/恢复备份，换设备不丢数据 |
 
 ---
 
-## 快速开始
+## 🚀 直接下载使用
 
-### 环境要求
+<p align="center">
+  <a href="https://github.com/XINGANLIU/word_journey/releases/latest">
+    <img src="https://img.shields.io/badge/📥 Windows 下载-0078D6?style=for-the-badge&logo=windows" alt="Windows">
+  </a>
+  &nbsp;
+  <a href="https://github.com/XINGANLIU/word_journey/releases/latest">
+    <img src="https://img.shields.io/badge/📥 Android 下载-3DDC84?style=for-the-badge&logo=android" alt="Android">
+  </a>
+</p>
 
-- **Flutter** ≥ 3.41
-- **Windows**：Visual Studio + Developer Mode
-- **Android**：Android Studio + SDK 36
+> 无需安装 Flutter，解压即用（Windows）/ 直接安装 APK（Android）
+
+---
+
+## 🛠 开发者
+
+### 环境
+- Flutter ≥ 3.41 | Windows: Visual Studio | Android: Android Studio
 
 ### 运行
-
 ```bash
 git clone https://github.com/XINGANLIU/word_journey.git
-cd word_journey
-flutter pub get
+cd word_journey && flutter pub get
+flutter run -d windows   # 或 -d android
+```
 
-# Windows
-flutter run -d windows
-
-# Android
-flutter run -d android
+### 打包
+```bash
+flutter build windows --release   # → build/windows/x64/runner/Release/
+flutter build apk --release       # → build/app/outputs/flutter-apk/
 ```
 
 ---
 
-## 项目结构
+## 📦 项目结构
 
 ```
 lib/
-├── main.dart                          # 入口，首次引导逻辑
-├── app.dart                           # 主界面、复习页、词书页、统计页、设置页
-├── controllers/
-│   └── study_controller.dart          # 核心控制器：调度、进度、收藏、备份
-├── models/
-│   └── study_models.dart              # 数据模型：单词、进度、统计
-├── data/
-│   ├── dictionary_repository.dart     # 词库加载（多词书 + 自定义导入）
-│   └── word_analysis.dart             # 词根词缀、同义词、反义词数据库
-├── pages/
-│   ├── onboarding_page.dart           # 首次启动词书选择页
-│   ├── add_words_page.dart            # 词典搜索 / 单词添加页
-│   ├── dictation_page.dart            # 听写模式页
-│   ├── word_detail_page.dart          # 单词详情页（词根/同反义词）
-├── services/
-│   ├── pronunciation_service.dart     # TTS 发音服务
-│   └── notification_service.dart      # 每日学习提醒
-assets/data/word_books/               # 词库 JSON 文件
-tool/                                  # Python 词库生成脚本
+├── main.dart / app.dart              # 入口 + 4 标签主界面
+├── controllers/study_controller.dart # 核心：调度/进度/收藏/备份
+├── data/                             # 词库加载 + 词根分析数据
+├── pages/                            # 引导/选词/听写/单词详情
+├── services/                         # TTS 发音 + 每日提醒
+assets/data/word_books/              # 7 本词书 JSON
+tool/                                 # Python 词库生成脚本
 ```
 
 ---
 
-## 词库说明
+## 📋 词库
 
-| 词书 | 单词数 | 来源 |
-|------|--------|------|
-| 高考词汇 | 3,500 | ECDICT |
-| 四级核心词 | 4,500 | ECDICT |
-| 六级核心词 | 5,394 | ECDICT |
-| 考研词汇 | 4,800 | ECDICT |
-| 雅思词汇 | 5,010 | ECDICT |
-| 托福词汇 | 6,937 | ECDICT |
-| 常见 10000 词 | 10,000 | ECDICT |
-| **去重总计** | **~30,000** | |
-
-> 词义来自 [ECDICT](https://github.com/skywind3000/ECDICT)，例句由 ECDICT 定义字段提取 + 模板生成。
-
-### 重新生成词库
-
-```bash
-# 确保已下载 ECDICT（首次运行自动下载）
-python tool/build_word_books.py     # 生成分类词书
-python tool/build_common_10000.py   # 生成 10000 常见词
-python tool/add_examples.py         # 补充例句
-```
-
----
-
-## 打包发布
-
-```bash
-# Windows exe
-flutter build windows --release
-# 产物: build\windows\x64\runner\Release\
-
-# Android APK
-flutter build apk --release
-# 产物: build\app\outputs\flutter-apk\app-release.apk
-```
-
----
-
-## 技术栈
-
-| 技术 | 用途 |
+| 词书 | 词数 | 
 |------|------|
-| Flutter 3 | 跨平台 UI 框架 |
-| shared_preferences | 本地数据持久化 |
-| flutter_tts | TTS 语音朗读 |
-| flutter_local_notifications | 每日学习提醒 |
-| file_picker | 文件导入/导出 |
-| ECDICT | 词库数据源 |
+| 高考 | 3,500 |
+| 四级 | 4,500 |
+| 六级 | 5,394 |
+| 考研 | 4,800 |
+| 雅思 | 5,010 |
+| 托福 | 6,937 |
+| 10000 常见词 | 10,000 |
+| **去重合计** | **~30,000** |
+
+> 数据来源 [ECDICT](https://github.com/skywind3000/ECDICT) MIT 协议
 
 ---
 
-## License
-
-MIT © [XINGANLIU](https://github.com/XINGANLIU)
+<p align="center">
+  <sub>MIT © <a href="https://github.com/XINGANLIU">XINGANLIU</a></sub>
+</p>
