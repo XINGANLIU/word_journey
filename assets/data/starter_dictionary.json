@@ -1,0 +1,1655 @@
+{
+  "generatedAt": "2026-05-10T14:25:40.435529+00:00",
+  "sources": {
+    "dictionary": {
+      "name": "ECDICT",
+      "url": "https://github.com/skywind3000/ECDICT",
+      "license": "MIT"
+    },
+    "examples": {
+      "name": "Tatoeba",
+      "url": "https://tatoeba.org/",
+      "license": "CC BY 2.0 FR / CC0 (varies by sentence)"
+    }
+  },
+  "words": [
+    {
+      "id": "have",
+      "word": "have",
+      "phonetic": "h\u00e6v",
+      "meaning": "\u6709\uff1b\u6000\u6709",
+      "definition": "have or possess, either in a concrete or an abstract sense\\nv. have as a feature\\nv. have a personal or business relationship with someone\\nv. have left",
+      "note": "have or possess, either in a concrete or an abstract sense\\nv. have as a feature\\nv. have a personal or business relationship with someone\\nv. have left",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u52a8\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Have respect!",
+          "zh": "\u8981\u5c0a\u91cd\uff01",
+          "source": "Tatoeba",
+          "sourceId": "10472220"
+        },
+        {
+          "en": "Have patience.",
+          "zh": "\u8010\u5fc3\u9ede\u3002",
+          "source": "Tatoeba",
+          "sourceId": "8917076"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "word": "say",
+      "phonetic": "sei",
+      "meaning": "\u8bf4\uff1b\u8bb2",
+      "definition": "the chance to speak\\nv. communicate or express nonverbally\\nv. utter aloud\\nv. state as one's opinion or judgement; declare",
+      "note": "the chance to speak\\nv. communicate or express nonverbally\\nv. utter aloud\\nv. state as one's opinion or judgement; declare",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u52a8\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "Say something.",
+          "zh": "\u968f\u4fbf\u8bf4\u70b9\u4ec0\u4e48\u3002",
+          "source": "Tatoeba",
+          "sourceId": "2111560"
+        },
+        {
+          "en": "Say something!",
+          "zh": "\u8aaa\u4e9b\u4ec0\u9ebc\u5427\uff01",
+          "source": "Tatoeba",
+          "sourceId": "1658103"
+        }
+      ]
+    },
+    {
+      "id": "not",
+      "word": "not",
+      "phonetic": "n\u0252t",
+      "meaning": "\u4e0d\uff1b\u975e",
+      "definition": "negation of a word or group of words",
+      "note": "negation of a word or group of words",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u526f\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Absolutely not!",
+          "zh": "\u8fd9\u4e0d\u53ef\u80fd\uff01",
+          "source": "Tatoeba",
+          "sourceId": "9008143"
+        },
+        {
+          "en": "Not exactly.",
+          "zh": "\u4e0d\u6e96\u78ba\u3002",
+          "source": "Tatoeba",
+          "sourceId": "8633976"
+        }
+      ]
+    },
+    {
+      "id": "can",
+      "word": "can",
+      "phonetic": "k\u00e6n",
+      "meaning": "\u88c5\u7f50\\nn. \u7f50\u5934\uff1b\u5bb9\u5668\\naux. \u80fd",
+      "definition": "airtight sealed metal container for food or drink or paint etc.\\nn. the quantity contained in a can\\nn. a buoy with a round bottom and conical top\\nv. preserve in a can or tin",
+      "note": "airtight sealed metal container for food or drink or paint etc.\\nn. the quantity contained in a can\\nn. a buoy with a round bottom and conical top\\nv. preserve in a can or tin",
+      "level": "TOEFL",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u52a8\u8bcd",
+        "TOEFL"
+      ],
+      "examples": [
+        {
+          "en": "Can he continue?",
+          "zh": "\u4ed6\u80fd\u7e7c\u7e8c\u55ce\uff1f",
+          "source": "Tatoeba",
+          "sourceId": "13648429"
+        },
+        {
+          "en": "Taiwan can help.",
+          "zh": "\u53f0\u7063\u80fd\u5e6b\u52a9\u3002",
+          "source": "Tatoeba",
+          "sourceId": "13247900"
+        }
+      ]
+    },
+    {
+      "id": "get",
+      "word": "get",
+      "phonetic": "get",
+      "meaning": "\u5f97\u5230\uff1b\u83b7\u5f97",
+      "definition": "a return on a shot that seemed impossible to reach and would normally have resulted in a point for the opponent\\nv. come into the possession of something concrete or abstract\\nv. cause to move; cause to be in a certain position or condition\\nv. succeed in catching or seizing, especially after a chase",
+      "note": "a return on a shot that seemed impossible to reach and would normally have resulted in a point for the opponent\\nv. come into the possession of something concrete or abstract\\nv. cause to move; cause to be in a certain position or condition\\nv. succeed in catching or seizing, especially after a chase",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u52a8\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "Get dressed!",
+          "zh": "\u7a7f\u8863\u670d\uff01",
+          "source": "Tatoeba",
+          "sourceId": "5041859"
+        }
+      ]
+    },
+    {
+      "id": "make",
+      "word": "make",
+      "phonetic": "meik",
+      "meaning": "\u5236\u9020\uff1b\u5b89\u6392",
+      "definition": "engage in\\nv. give certain properties to something\\nv. make or cause to be or to become\\nv. compel or make somebody or something to act in a certain way",
+      "note": "engage in\\nv. give certain properties to something\\nv. make or cause to be or to become\\nv. compel or make somebody or something to act in a certain way",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u52a8\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "Make something!",
+          "zh": "\u505a\u70b9\u4ec0\u4e48\u5427\uff01",
+          "source": "Tatoeba",
+          "sourceId": "13246899"
+        },
+        {
+          "en": "Make coffee.",
+          "zh": "\u716e\u5496\u5561\u3002",
+          "source": "Tatoeba",
+          "sourceId": "62185"
+        }
+      ]
+    },
+    {
+      "id": "will",
+      "word": "will",
+      "phonetic": "wil",
+      "meaning": "\u610f\u5fd7\uff1b\u51b3\u5fc3",
+      "definition": "a fixed and persistent intent or purpose\\nn. a legal document declaring a person's wishes regarding the disposal of their property when they die\\nv. decree or ordain\\nv. determine by choice",
+      "note": "a fixed and persistent intent or purpose\\nn. a legal document declaring a person's wishes regarding the disposal of their property when they die\\nv. decree or ordain\\nv. determine by choice",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Will you bathe?",
+          "zh": "\u8981\u6d17\u6fa1\u55ce\uff1f",
+          "source": "Tatoeba",
+          "sourceId": "11010774"
+        },
+        {
+          "en": "Ziri will lose.",
+          "zh": "Ziri\u8981\u8f93\u4e86\u3002",
+          "source": "Tatoeba",
+          "sourceId": "10230732"
+        }
+      ]
+    },
+    {
+      "id": "one",
+      "word": "one",
+      "phonetic": "w\u028cn",
+      "meaning": "\u4e00(\u4e2a)\\npron. \u4e00\uff1b\u4efb\u4f55\u4eba\\nnum. \u4e00",
+      "definition": "the smallest whole number or a numeral representing this number\\nn. a single person or thing\\ns. used of a single unit or thing; not two or more\\ns. having the indivisible character of a unit",
+      "note": "the smallest whole number or a numeral representing this number\\nn. a single person or thing\\ns. used of a single unit or thing; not two or more\\ns. having the indivisible character of a unit",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "One hundred percent.",
+          "zh": "100%\u3002",
+          "source": "Tatoeba",
+          "sourceId": "13047005"
+        }
+      ]
+    },
+    {
+      "id": "year",
+      "word": "year",
+      "phonetic": "ji\u04d9",
+      "meaning": "\u5e74\uff1b\u5e74\u5ea6",
+      "definition": "a period of time containing 365 (or 366) days\\nn. a period of time occupying a regular part of a calendar year that is used for some particular activity\\nn. the period of time that it takes for a planet (as, e.g., Earth or Mars) to make a complete revolution around the sun",
+      "note": "a period of time containing 365 (or 366) days\\nn. a period of time occupying a regular part of a calendar year that is used for some particular activity\\nn. the period of time that it takes for a planet (as, e.g., Earth or Mars) to make a complete revolution around the sun",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Happy New Year!",
+          "zh": "\u65b0\u5e74\u5feb\u4e50\uff01",
+          "source": "Tatoeba",
+          "sourceId": "361350"
+        },
+        {
+          "en": "This year is 2011.",
+          "zh": "\u4eca\u5e74\u662f\u4e8c\u96f6\u4e00\u4e00\u5e74\u3002",
+          "source": "Tatoeba",
+          "sourceId": "5327634"
+        }
+      ]
+    },
+    {
+      "id": "think",
+      "word": "think",
+      "phonetic": "\u03b8i\u014bk",
+      "meaning": "\u60f3\uff1b\u8003\u8651",
+      "definition": "an instance of deliberate thinking\\nv. judge or regard; look upon; judge\\nv. expect, believe, or suppose\\nv. use or exercise the mind or one's power of reason in order to make inferences, decisions, or arrive at a solution or judgments",
+      "note": "an instance of deliberate thinking\\nv. judge or regard; look upon; judge\\nv. expect, believe, or suppose\\nv. use or exercise the mind or one's power of reason in order to make inferences, decisions, or arrive at a solution or judgments",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u52a8\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Think quickly!",
+          "zh": "\u5feb\u60f3\uff01",
+          "source": "Tatoeba",
+          "sourceId": "13111643"
+        },
+        {
+          "en": "You think rightly.",
+          "zh": "\u59b3\u8a8d\u70ba\u7684\u5c0d\u3002",
+          "source": "Tatoeba",
+          "sourceId": "11818114"
+        }
+      ]
+    },
+    {
+      "id": "people",
+      "word": "people",
+      "phonetic": "'pi:pl",
+      "meaning": "\u4eba\uff1b\u4eba\u6c11",
+      "definition": "(plural) any group of human beings (men or women or children) collectively\\nn. members of a family line\\nv. fill with people\\nv. furnish with people",
+      "note": "(plural) any group of human beings (men or women or children) collectively\\nn. members of a family line\\nv. fill with people\\nv. furnish with people",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "People are people.",
+          "zh": "\u4eba\u662f\u4eba\u3002",
+          "source": "Tatoeba",
+          "sourceId": "13712956"
+        },
+        {
+          "en": "Are cats people?",
+          "zh": "\u8c93\u662f\u4eba\u55ce\uff1f",
+          "source": "Tatoeba",
+          "sourceId": "13112859"
+        }
+      ]
+    },
+    {
+      "id": "how",
+      "word": "how",
+      "phonetic": "hau",
+      "meaning": "\u5982\u4f55\uff1b\u600e\u6837",
+      "definition": "In what manner or way; by what means or process.\\nadv. To what degree or extent, number or amount; in what\\n proportion; by what measure or quality.\\nadv. For what reason; from what cause.\\nadv. In what state, condition, or plight.\\nadv. By what name, designation, or title.\\nadv. At what price; how dear.",
+      "note": "In what manner or way; by what means or process.\\nadv. To what degree or extent, number or amount; in what\\n proportion; by what measure or quality.\\nadv. For what reason; from what cause.\\nadv. In what state, condition, or plight.\\nadv. By what name, designation, or title.\\nadv. At what price; how dear.",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u526f\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "How pitiful!",
+          "zh": "\u53ef\u601c\u6b7b\u4e86\uff01",
+          "source": "Tatoeba",
+          "sourceId": "12080334"
+        },
+        {
+          "en": "How annoying.",
+          "zh": "\u771f\u9ebb\u70e6\u3002",
+          "source": "Tatoeba",
+          "sourceId": "10632771"
+        }
+      ]
+    },
+    {
+      "id": "then",
+      "word": "then",
+      "phonetic": "\u00f0en",
+      "meaning": "\u7136\u540e\uff1b\u5f53\u65f6\\nconj. \u7136\u540e",
+      "definition": "that time; that moment\\ns. at a specific prior time\\nr. subsequently or soon afterward (often used as sentence connectors)\\nr. in that case or as a consequence",
+      "note": "that time; that moment\\ns. at a specific prior time\\nr. subsequently or soon afterward (often used as sentence connectors)\\nr. in that case or as a consequence",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u526f\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Okay, and then?",
+          "zh": "\u662f\u7684\uff0c\u7136\u5f8c\u5462\uff1f",
+          "source": "Tatoeba",
+          "sourceId": "12278428"
+        },
+        {
+          "en": "Parry, then strike.",
+          "zh": "\u5148\u683c\u64cb\uff0c\u518d\u53cd\u64ca\u3002",
+          "source": "Tatoeba",
+          "sourceId": "10148304"
+        }
+      ]
+    },
+    {
+      "id": "more",
+      "word": "more",
+      "phonetic": "m\u0252:",
+      "meaning": "\u66f4\u591a\\na. \u591a\u7684\uff1b\u7a0b\u5ea6\u8f83\u5927\u7684",
+      "definition": "English statesman who opposed Henry VIII's divorce from Catherine of Aragon and was imprisoned and beheaded; recalled for his concept of Utopia, the ideal state\\na. (comparative of `much' used with mass nouns) a quantifier meaning greater in size or amount or extent or degree\\na. (comparative of `many' used with count nouns) quantifier meaning greater in number\\nr. used to form the comparative of some adjectives and adverbs",
+      "note": "English statesman who opposed Henry VIII's divorce from Catherine of Aragon and was imprisoned and beheaded; recalled for his concept of Utopia, the ideal state\\na. (comparative of `much' used with mass nouns) a quantifier meaning greater in size or amount or extent or degree\\na. (comparative of `many' used with count nouns) quantifier meaning greater in number\\nr. used to form the comparative of some adjectives and adverbs",
+      "level": "\u4e2d\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u4e2d\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Eat more apples.",
+          "zh": "\u4f60\u591a\u5403\u82f9\u679c\u3002",
+          "source": "Tatoeba",
+          "sourceId": "13187582"
+        },
+        {
+          "en": "No more sitting.",
+          "zh": "\u4e0d\u5750\u4e86\u3002",
+          "source": "Tatoeba",
+          "sourceId": "13112418"
+        }
+      ]
+    },
+    {
+      "id": "want",
+      "word": "want",
+      "phonetic": "w\u0252nt",
+      "meaning": "\u9700\u8981\u7684\u4e1c\u897f\uff1b\u7f3a\u4e4f",
+      "definition": "have need of\\nv. hunt or look for; want for a particular reason\\nv. wish or demand the presence of\\nv. be without, lack; be deficient in",
+      "note": "have need of\\nv. hunt or look for; want for a particular reason\\nv. wish or demand the presence of\\nv. be without, lack; be deficient in",
+      "level": "GRE",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "GRE"
+      ],
+      "examples": [
+        {
+          "en": "I want dorayaki!",
+          "zh": "\u6211\u8981\u9285\u947c\u71d2\uff01",
+          "source": "Tatoeba",
+          "sourceId": "13545884"
+        },
+        {
+          "en": "I want Dorayaki!",
+          "zh": "\u6211\u8981\u9285\u947c\u71d2\uff01",
+          "source": "Tatoeba",
+          "sourceId": "12624895"
+        }
+      ]
+    },
+    {
+      "id": "way",
+      "word": "way",
+      "phonetic": "wei",
+      "meaning": "\u8def\uff1b\u8def\u7ebf",
+      "definition": "the condition of things generally\\nn. a course of conduct\\nn. any artifact consisting of a road or path affording passage from one place to another\\nn. a journey or passage",
+      "note": "the condition of things generally\\nn. a course of conduct\\nn. any artifact consisting of a road or path affording passage from one place to another\\nn. a journey or passage",
+      "level": "TOEFL",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "TOEFL"
+      ],
+      "examples": [
+        {
+          "en": "Take his way.",
+          "zh": "\u63a1\u7528\u4ed6\u7684\u65b9\u6cd5\u3002",
+          "source": "Tatoeba",
+          "sourceId": "12677896"
+        },
+        {
+          "en": "Outta my way!",
+          "zh": "\u8ba9\u5f00\u3002",
+          "source": "Tatoeba",
+          "sourceId": "2807974"
+        }
+      ]
+    },
+    {
+      "id": "look",
+      "word": "look",
+      "phonetic": "luk",
+      "meaning": "\u4e00\u770b\uff1b\u795e\u8272",
+      "definition": "the act of directing the eyes toward something and perceiving it visually\\nn. physical appearance\\nv. perceive with attention; direct one's gaze towards\\nv. give a certain impression or have a certain outward aspect",
+      "note": "the act of directing the eyes toward something and perceiving it visually\\nn. physical appearance\\nv. perceive with attention; direct one's gaze towards\\nv. give a certain impression or have a certain outward aspect",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Look outside.",
+          "zh": "\u770b\u5916\u9762\uff01",
+          "source": "Tatoeba",
+          "sourceId": "9476403"
+        },
+        {
+          "en": "Look outside!",
+          "zh": "\u770b\u5916\u9762\uff01",
+          "source": "Tatoeba",
+          "sourceId": "9476402"
+        }
+      ]
+    },
+    {
+      "id": "first",
+      "word": "first",
+      "phonetic": "f\u04d9:st",
+      "meaning": "\u9996\u5148\uff1b\u7b2c\u4e00",
+      "definition": "the first or highest in an ordering or series\\nn. the first element in a countable series\\nn. an honours degree of the highest class\\na. preceding all others in time or space or degree",
+      "note": "the first or highest in an ordering or series\\nn. the first element in a countable series\\nn. an honours degree of the highest class\\na. preceding all others in time or space or degree",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u526f\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Ladies first!",
+          "zh": "\u5973\u58eb\u4f18\u5148\u3002",
+          "source": "Tatoeba",
+          "sourceId": "666596"
+        },
+        {
+          "en": "Ladies first.",
+          "zh": "\u5973\u58eb\u4f18\u5148\u3002",
+          "source": "Tatoeba",
+          "sourceId": "54331"
+        }
+      ]
+    },
+    {
+      "id": "also",
+      "word": "also",
+      "phonetic": "'\u0252:ls\u04d9u",
+      "meaning": "\u4e5f\uff1b\u5e76\u4e14",
+      "definition": "in addition",
+      "note": "in addition",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u526f\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "I also agree.",
+          "zh": "\u6211\u4eec\u4e5f\u540c\u610f\u3002",
+          "source": "Tatoeba",
+          "sourceId": "5933089"
+        },
+        {
+          "en": "Tom also talked.",
+          "zh": "\u6e6f\u59c6\u4e5f\u8aaa\u8a71\u4e86\u3002",
+          "source": "Tatoeba",
+          "sourceId": "3721524"
+        }
+      ]
+    },
+    {
+      "id": "use",
+      "word": "use",
+      "phonetic": "ju:s",
+      "meaning": "\u4f7f\u7528\uff1b\u4e60\u60ef",
+      "definition": "the act of using\\nn. a particular service\\nn. (law) the exercise of the legal right to enjoy the benefits of owning property\\nv. put into service; make work or employ for a particular purpose or for its inherent or natural purpose",
+      "note": "the act of using\\nn. a particular service\\nn. (law) the exercise of the legal right to enjoy the benefits of owning property\\nv. put into service; make work or employ for a particular purpose or for its inherent or natural purpose",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Use caution.",
+          "zh": "\u5f53\u5fc3\uff01",
+          "source": "Tatoeba",
+          "sourceId": "5758415"
+        },
+        {
+          "en": "Use your imagination.",
+          "zh": "\u53d1\u6325\u60a8\u7684\u60f3\u8c61\u529b\u3002",
+          "source": "Tatoeba",
+          "sourceId": "2253846"
+        }
+      ]
+    },
+    {
+      "id": "man",
+      "word": "man",
+      "phonetic": "m\u00e6n",
+      "meaning": "\u7537\u4eba\uff1b\u4eba\u7c7b",
+      "definition": "an adult person who is male (as opposed to a woman)\\nn. the generic use of the word to refer to any human being\\nn. a male subordinate\\nn. an adult male person who has a manly character (virile and courageous competent)",
+      "note": "an adult person who is male (as opposed to a woman)\\nn. the generic use of the word to refer to any human being\\nn. a male subordinate\\nn. an adult male person who has a manly character (virile and courageous competent)",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Man must work.",
+          "zh": "\u7537\u4eba\u5e94\u8be5\u5de5\u4f5c\u3002",
+          "source": "Tatoeba",
+          "sourceId": "1072520"
+        },
+        {
+          "en": "Man is mortal.",
+          "zh": "\u4eba\u5fc5\u5b9a\u8981\u6b7b\u7684\u3002",
+          "source": "Tatoeba",
+          "sourceId": "270072"
+        }
+      ]
+    },
+    {
+      "id": "find",
+      "word": "find",
+      "phonetic": "faind",
+      "meaning": "\u53d1\u73b0\uff1b\u611f\u5230",
+      "definition": "come upon, as if by accident; meet with\\nv. come upon after searching; find the location of something that was missed or lost\\nv. come to believe on the basis of emotion, intuitions, or indefinite grounds\\nv. obtain through effort or management",
+      "note": "come upon, as if by accident; meet with\\nv. come upon after searching; find the location of something that was missed or lost\\nv. come to believe on the basis of emotion, intuitions, or indefinite grounds\\nv. obtain through effort or management",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u52a8\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Find a doctor!",
+          "zh": "\u53bb\u770b\u91ab\u751f\u5427\u3002",
+          "source": "Tatoeba",
+          "sourceId": "12250432"
+        },
+        {
+          "en": "Search; find; discover!",
+          "zh": "\u641c\u67e5\uff1b\u5c0b\u627e\uff1b\u767c\u73fe\uff01",
+          "source": "Tatoeba",
+          "sourceId": "2602152"
+        }
+      ]
+    },
+    {
+      "id": "here",
+      "word": "here",
+      "phonetic": "hi\u04d9",
+      "meaning": "\u5728\u8fd9\u91cc\uff1b\u6b64\u65f6",
+      "definition": "the present location; this place\\ns. being here now\\nr. in or at this place; where the speaker or writer is\\nr. in this circumstance or respect or on this point or detail",
+      "note": "the present location; this place\\ns. being here now\\nr. in or at this place; where the speaker or writer is\\nr. in this circumstance or respect or on this point or detail",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u526f\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Here, please.",
+          "zh": "\u7d66\u4f60\u3002",
+          "source": "Tatoeba",
+          "sourceId": "10565484"
+        },
+        {
+          "en": "Here, catch!",
+          "zh": "\u8fd9\u91cc\uff0c\u5feb\u6293\u4f4f\u3002",
+          "source": "Tatoeba",
+          "sourceId": "6858683"
+        }
+      ]
+    },
+    {
+      "id": "thing",
+      "word": "thing",
+      "phonetic": "\u03b8i\u014b",
+      "meaning": "\u4e8b\u7269\uff1b\u4e1c\u897f",
+      "definition": "a special situation\\nn. an action\\nn. a special abstraction\\nn. an artifact",
+      "note": "a special situation\\nn. an action\\nn. a special abstraction\\nn. an artifact",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Hide that thing.",
+          "zh": "\u628a\u90a3\u500b\u6771\u897f\u85cf\u8d77\u4f86\u3002",
+          "source": "Tatoeba",
+          "sourceId": "13805332"
+        },
+        {
+          "en": "one more thing!",
+          "zh": "\u518d\u6765\u4e00\u4e2a\uff01",
+          "source": "Tatoeba",
+          "sourceId": "7899778"
+        }
+      ]
+    },
+    {
+      "id": "give",
+      "word": "give",
+      "phonetic": "giv",
+      "meaning": "\u5f39\u6027\uff1b\u9002\u5e94\u6027\\nvt. \u7ed9",
+      "definition": "the elasticity of something that can be stretched and returns to its original length\\nv. cause to have, in the abstract sense or physical sense\\nv. transfer possession of something concrete or abstract to somebody\\nv. convey or reveal information",
+      "note": "the elasticity of something that can be stretched and returns to its original length\\nv. cause to have, in the abstract sense or physical sense\\nv. transfer possession of something concrete or abstract to somebody\\nv. convey or reveal information",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "Give yourself value.",
+          "zh": "\u8ce6\u4e88\u81ea\u5df1\u50f9\u503c\u3002",
+          "source": "Tatoeba",
+          "sourceId": "11995132"
+        },
+        {
+          "en": "Give me water!",
+          "zh": "\u7d66\u6211\u6c34\uff01",
+          "source": "Tatoeba",
+          "sourceId": "7347590"
+        }
+      ]
+    },
+    {
+      "id": "many",
+      "word": "many",
+      "phonetic": "'meni",
+      "meaning": "\u591a\u6570\uff1b\u591a\u6570\u4eba\\na. \u8bb8\u591a\u7684\\npron. \u8bb8\u591a",
+      "definition": "a quantifier that can be used with count nouns and is often preceded by `as' or `too' or `so' or `that'; amounting to a large but indefinite number",
+      "note": "a quantifier that can be used with count nouns and is often preceded by `as' or `too' or `so' or `that'; amounting to a large but indefinite number",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Many thanks.",
+          "zh": "\u5341\u5206\u611f\u8c22\u3002",
+          "source": "Tatoeba",
+          "sourceId": "322178"
+        },
+        {
+          "en": "Many happy returns!",
+          "zh": "\u751f\u65e5\u5feb\u4e50\uff01",
+          "source": "Tatoeba",
+          "sourceId": "12198267"
+        }
+      ]
+    },
+    {
+      "id": "well",
+      "word": "well",
+      "phonetic": "wel",
+      "meaning": "\u4e95\uff1b\u6cc9\u6c34",
+      "definition": "a deep hole or shaft dug or drilled to obtain water or oil or gas or brine\\nn. a cavity or vessel used to contain liquid\\nn. an abundant source\\nn. an open shaft through the floors of a building (as for a stairway)",
+      "note": "a deep hole or shaft dug or drilled to obtain water or oil or gas or brine\\nn. a cavity or vessel used to contain liquid\\nn. an abundant source\\nn. an open shaft through the floors of a building (as for a stairway)",
+      "level": "TOEFL",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "TOEFL"
+      ],
+      "examples": [
+        {
+          "en": "Behave well.",
+          "zh": "\u597d\u597d\u70ba\u4eba\u8655\u4e8b\u3002",
+          "source": "Tatoeba",
+          "sourceId": "8908813"
+        }
+      ]
+    },
+    {
+      "id": "tell",
+      "word": "tell",
+      "phonetic": "tel",
+      "meaning": "\u544a\u8bc9\uff1b\u8bf4",
+      "definition": "a Swiss patriot who lived in the early 14th century and who was renowned for his skill as an archer; according to legend an Austrian governor compelled him to shoot an apple from his son's head with his crossbow (which he did successfully without mishap)\\nv. let something be known\\nv. narrate or give a detailed account of\\nv. discern or comprehend",
+      "note": "a Swiss patriot who lived in the early 14th century and who was renowned for his skill as an archer; according to legend an Austrian governor compelled him to shoot an apple from his son's head with his crossbow (which he did successfully without mishap)\\nv. let something be known\\nv. narrate or give a detailed account of\\nv. discern or comprehend",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u52a8\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Tell me later.",
+          "zh": "\u4e00\u4f1a\u513f\u518d\u544a\u8bc9\u6211\u3002",
+          "source": "Tatoeba",
+          "sourceId": "6953260"
+        },
+        {
+          "en": "Tell us everything!",
+          "zh": "\u544a\u8bc9\u6211\u4eec\u4e00\u5207\u3002",
+          "source": "Tatoeba",
+          "sourceId": "6713631"
+        }
+      ]
+    },
+    {
+      "id": "woman",
+      "word": "woman",
+      "phonetic": "'wum\u04d9n",
+      "meaning": "\u5973\u4eba\uff1b\u5987\u5973",
+      "definition": "an adult female person (as opposed to a man)\\nn. a female person who plays a significant role (wife or mistress or girlfriend) in the life of a particular man",
+      "note": "an adult female person (as opposed to a man)\\nn. a female person who plays a significant role (wife or mistress or girlfriend) in the life of a particular man",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Where is that woman?",
+          "zh": "\u90a3\u4e2a\u5973\u4eba\u5728\u54ea\u91cc\uff1f",
+          "source": "Tatoeba",
+          "sourceId": "9414941"
+        },
+        {
+          "en": "Who's that woman?",
+          "zh": "\u90a3\u4e2a\u5973\u4eba\u662f\u8c01\uff1f",
+          "source": "Tatoeba",
+          "sourceId": "6440582"
+        }
+      ]
+    },
+    {
+      "id": "through",
+      "word": "through",
+      "phonetic": "\u03b8ru:",
+      "meaning": "\u7a7f\u8d8a\uff1b\u4ece\u5934\u81f3\u5c3e",
+      "definition": "(of a route or journey etc.) continuing without requiring stops or changes\\nr. from beginning to end\\nr. over the whole distance\\nr. to completion",
+      "note": "(of a route or journey etc.) continuing without requiring stops or changes\\nr. from beginning to end\\nr. over the whole distance\\nr. to completion",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u526f\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Strength through unity.",
+          "zh": "\u4e09\u4e2a\u81ed\u76ae\u5320\uff0c\u8d5b\u8fc7\u8bf8\u845b\u4eae\u3002",
+          "source": "Tatoeba",
+          "sourceId": "1068373"
+        },
+        {
+          "en": "I'm wet through.",
+          "zh": "\u6211\u6fd5\u4e86\u3002",
+          "source": "Tatoeba",
+          "sourceId": "10794642"
+        }
+      ]
+    },
+    {
+      "id": "life",
+      "word": "life",
+      "phonetic": "laif",
+      "meaning": "\u751f\u6d3b\uff1b\u751f\u547d",
+      "definition": "a characteristic state or mode of living\\nn. the experience of being alive; the course of human events and activities\\nn. the course of existence of an individual; the actions and events that occur in living\\nn. the period during which something is functional (as between birth and death)",
+      "note": "a characteristic state or mode of living\\nn. the experience of being alive; the course of human events and activities\\nn. the course of existence of an individual; the actions and events that occur in living\\nn. the period during which something is functional (as between birth and death)",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "That's life!",
+          "zh": "\u9019\u5c31\u662f\u4eba\u751f\uff01",
+          "source": "Tatoeba",
+          "sourceId": "10010723"
+        },
+        {
+          "en": "This is life.",
+          "zh": "\u9019\u5c31\u662f\u751f\u547d\u3002",
+          "source": "Tatoeba",
+          "sourceId": "9419669"
+        }
+      ]
+    },
+    {
+      "id": "child",
+      "word": "child",
+      "phonetic": "t\u0283aild",
+      "meaning": "\u5b69\u5b50\uff1b\u4ea7\u7269",
+      "definition": "a young person of either sex\\nn. a human offspring (son or daughter) of any age\\nn. an immature childish person\\nn. a member of a clan or tribe",
+      "note": "a young person of either sex\\nn. a human offspring (son or daughter) of any age\\nn. an immature childish person\\nn. a member of a clan or tribe",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "The child cried.",
+          "zh": "\u5c0f\u5b69\u54ed\u4e86\u3002",
+          "source": "Tatoeba",
+          "sourceId": "10251072"
+        },
+        {
+          "en": "My child is sick.",
+          "zh": "\u6211\u7684\u5b69\u5b50\u75c5\u4e86\u3002",
+          "source": "Tatoeba",
+          "sourceId": "10696154"
+        }
+      ]
+    },
+    {
+      "id": "work",
+      "word": "work",
+      "phonetic": "w\u04d9:k",
+      "meaning": "\u5de5\u4f5c\uff1b\u52b3\u52a8",
+      "definition": "activity directed toward making or doing something\\nn. a product produced or accomplished through the effort or activity or agency of a person or thing\\nn. (physics) a manifestation of energy; the transfer of energy from one physical system to another expressed as the product of a force and the distance through which it moves a body in the direction of that force\\nv. exert oneself by doing mental or physical work for a purpose or out of necessity",
+      "note": "activity directed toward making or doing something\\nn. a product produced or accomplished through the effort or activity or agency of a person or thing\\nn. (physics) a manifestation of energy; the transfer of energy from one physical system to another expressed as the product of a force and the distance through which it moves a body in the direction of that force\\nv. exert oneself by doing mental or physical work for a purpose or out of necessity",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Work faster.",
+          "zh": "\u5feb\u70b9\u5e72\u4f60\u7684\u6d3b\u3002",
+          "source": "Tatoeba",
+          "sourceId": "13226257"
+        }
+      ]
+    },
+    {
+      "id": "may",
+      "word": "may",
+      "phonetic": "mei",
+      "meaning": "\u4e94\u6708\\naux. \u613f\u80fd\uff1b\u53ef\u4ee5",
+      "definition": "the month following April and preceding June",
+      "note": "the month following April and preceding June",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "May I enter?",
+          "zh": "\u6211\u80fd\u8fdb\u6765\u5417\uff1f",
+          "source": "Tatoeba",
+          "sourceId": "10107162"
+        },
+        {
+          "en": "Anyone may participate.",
+          "zh": "\u8c01\u90fd\u53ef\u4ee5\u53c2\u52a0\u3002",
+          "source": "Tatoeba",
+          "sourceId": "8034607"
+        }
+      ]
+    },
+    {
+      "id": "call",
+      "word": "call",
+      "phonetic": "k\u0252:l",
+      "meaning": "\u547c\u53eb\uff1b\u8bbf\u95ee",
+      "definition": "a telephone connection\\nn. a special disposition (as if from a divine source) to pursue a particular course\\nn. a demand especially in the phrase \"the call of duty\"\\nn. a brief social visit",
+      "note": "a telephone connection\\nn. a special disposition (as if from a divine source) to pursue a particular course\\nn. a demand especially in the phrase \"the call of duty\"\\nn. a brief social visit",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "Call security.",
+          "zh": "\u53eb\u4fdd\u5b89\u6765\uff01",
+          "source": "Tatoeba",
+          "sourceId": "5767419"
+        },
+        {
+          "en": "Call security!",
+          "zh": "\u53eb\u4fdd\u5b89\u6765\uff01",
+          "source": "Tatoeba",
+          "sourceId": "1682859"
+        }
+      ]
+    },
+    {
+      "id": "world",
+      "word": "world",
+      "phonetic": "w\u04d9:ld",
+      "meaning": "\u4e16\u754c\uff1b\u5730\u7403",
+      "definition": "people in general; especially a distinctive group of people with some shared interest\\nn. all of your experiences that determine how things appear to you\\nn. a part of the earth that can be considered separately\\nn. all of the living human inhabitants of the earth",
+      "note": "people in general; especially a distinctive group of people with some shared interest\\nn. all of your experiences that determine how things appear to you\\nn. a part of the earth that can be considered separately\\nn. all of the living human inhabitants of the earth",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "Hello world!",
+          "zh": "\u4f60\u597d\uff0c\u4e16\u754c\uff01",
+          "source": "Tatoeba",
+          "sourceId": "11144401"
+        },
+        {
+          "en": "Small world.",
+          "zh": "\u4e16\u754c\u662f\u4e00\u4e2a\u5c0f\u6751\u3002",
+          "source": "Tatoeba",
+          "sourceId": "2280858"
+        }
+      ]
+    },
+    {
+      "id": "school",
+      "word": "school",
+      "phonetic": "sku:l",
+      "meaning": "\u5b66\u6821\uff1b\u9c7c\u7fa4",
+      "definition": "an educational institution\\nn. a building where young people receive education\\nn. the process of being formally educated at a school\\nn. a body of creative artists or writers or thinkers linked by a similar style or by similar teachers",
+      "note": "an educational institution\\nn. a building where young people receive education\\nn. the process of being formally educated at a school\\nn. a body of creative artists or writers or thinkers linked by a similar style or by similar teachers",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "How is school?",
+          "zh": "\u5b66\u6821\u600e\u4e48\u6837\uff1f",
+          "source": "Tatoeba",
+          "sourceId": "5107357"
+        },
+        {
+          "en": "How's school?",
+          "zh": "\u5b66\u6821\u600e\u4e48\u6837\uff1f",
+          "source": "Tatoeba",
+          "sourceId": "1885868"
+        }
+      ]
+    },
+    {
+      "id": "still",
+      "word": "still",
+      "phonetic": "stil",
+      "meaning": "\u84b8\u998f\u5ba4\uff1b\u5bc2\u9759",
+      "definition": "a static photograph (especially one taken from a movie and used for advertising purposes)\\nn. an apparatus used for the distillation of liquids; consists of a vessel in which a substance is vaporized by heat and a condenser where the vapor is condensed\\nv. lessen the intensity of or calm\\nv. make motionless",
+      "note": "a static photograph (especially one taken from a movie and used for advertising purposes)\\nn. an apparatus used for the distillation of liquids; consists of a vessel in which a substance is vaporized by heat and a condenser where the vapor is condensed\\nv. lessen the intensity of or calm\\nv. make motionless",
+      "level": "TOEFL",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "TOEFL"
+      ],
+      "examples": [
+        {
+          "en": "Stand still.",
+          "zh": "\u4e0d\u8981\u52a8\u3002",
+          "source": "Tatoeba",
+          "sourceId": "6358661"
+        },
+        {
+          "en": "Stand still!",
+          "zh": "\u4e0d\u8981\u52a8\u3002",
+          "source": "Tatoeba",
+          "sourceId": "2111527"
+        }
+      ]
+    },
+    {
+      "id": "need",
+      "word": "need",
+      "phonetic": "ni:d",
+      "meaning": "\u9700\u8981\uff1b\u5fc5\u987b",
+      "definition": "a condition requiring relief\\nn. anything that is necessary but lacking\\nv. have or feel a need for",
+      "note": "a condition requiring relief\\nn. anything that is necessary but lacking\\nv. have or feel a need for",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "We need you!",
+          "zh": "\u6211\u4eec\u9700\u8981\u60a8\uff01",
+          "source": "Tatoeba",
+          "sourceId": "13612443"
+        },
+        {
+          "en": "Need some help?",
+          "zh": "\u4f60\u9700\u8981\u5e2e\u52a9\u5417\uff1f",
+          "source": "Tatoeba",
+          "sourceId": "12872982"
+        }
+      ]
+    },
+    {
+      "id": "too",
+      "word": "too",
+      "phonetic": "tu:",
+      "meaning": "\u4e5f\uff1b\u975e\u5e38",
+      "definition": "to a degree exceeding normal or proper limits\\nr in addition",
+      "note": "to a degree exceeding normal or proper limits\\nr in addition",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u526f\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Too expensive!",
+          "zh": "\u592a\u8d35\u4e86\uff01",
+          "source": "Tatoeba",
+          "sourceId": "1216306"
+        }
+      ]
+    },
+    {
+      "id": "feel",
+      "word": "feel",
+      "phonetic": "fi:l",
+      "meaning": "\u611f\u89c9\uff1b\u89c9\u5f97",
+      "definition": "an intuitive awareness; \\nn. manual stimulation of the genital area for sexual pleasure\\nv. undergo an emotional sensation or be in a particular state of mind\\nv. perceive by a physical sensation, e.g., coming from the skin or muscles",
+      "note": "an intuitive awareness; \\nn. manual stimulation of the genital area for sexual pleasure\\nv. undergo an emotional sensation or be in a particular state of mind\\nv. perceive by a physical sensation, e.g., coming from the skin or muscles",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u52a8\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "I feel poorly.",
+          "zh": "\u6211\u611f\u89c9\u4e0d\u8212\u670d\u3002",
+          "source": "Tatoeba",
+          "sourceId": "10689177"
+        },
+        {
+          "en": "I feel heartache.",
+          "zh": "\u6211\u89c9\u5f97\u5fc3\u75db\u3002",
+          "source": "Tatoeba",
+          "sourceId": "7816296"
+        }
+      ]
+    },
+    {
+      "id": "state",
+      "word": "state",
+      "phonetic": "steit",
+      "meaning": "\u5dde\uff1b\u72b6\u6001",
+      "definition": "the territory occupied by one of the constituent administrative districts of a nation\\nn. the way something is with respect to its main attributes\\nn. the group of people comprising the government of a sovereign state\\nn. a politically organized body of people under a single government",
+      "note": "the territory occupied by one of the constituent administrative districts of a nation\\nn. the way something is with respect to its main attributes\\nn. the group of people comprising the government of a sovereign state\\nn. a politically organized body of people under a single government",
+      "level": "CET-4",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "CET-4"
+      ],
+      "examples": [
+        {
+          "en": "Tom attends state school.",
+          "zh": "\u6e6f\u59c6\u4e0a\u516c\u7acb\u5b78\u6821\u3002",
+          "source": "Tatoeba",
+          "sourceId": "10643365"
+        },
+        {
+          "en": "I am the state.",
+          "zh": "\u6715\u5373\u570b\u5bb6\uff01",
+          "source": "Tatoeba",
+          "sourceId": "630327"
+        }
+      ]
+    },
+    {
+      "id": "never",
+      "word": "never",
+      "phonetic": "'nev\u04d9",
+      "meaning": "\u4ece\u4e0d\uff1b\u51b3\u4e0d",
+      "definition": "not ever; at no time in the past or future\\nr. not at all; certainly not; not in any circumstances",
+      "note": "not ever; at no time in the past or future\\nr. not at all; certainly not; not in any circumstances",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u526f\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "She never shivers.",
+          "zh": "\u5979\u4ece\u4e0d\u5bb3\u6015\u3002",
+          "source": "Tatoeba",
+          "sourceId": "10855059"
+        },
+        {
+          "en": "He never sleeps.",
+          "zh": "\u4ed6\u5f9e\u4e0d\u7761\u89ba\u3002",
+          "source": "Tatoeba",
+          "sourceId": "8479402"
+        }
+      ]
+    },
+    {
+      "id": "become",
+      "word": "become",
+      "phonetic": "bi'k\u028cm",
+      "meaning": "\u53d8\u6210\uff1b\u53d8\u5f97\\nvt. \u9002\u5408",
+      "definition": "enter or assume a certain state or condition\\nv. undergo a change or development\\nv. come into existence\\nv. enhance the appearance of",
+      "note": "enter or assume a certain state or condition\\nv. undergo a change or development\\nv. come into existence\\nv. enhance the appearance of",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u52a8\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "It's become worse.",
+          "zh": "\u5b83\u53d8\u7cdf\u4e86\u3002",
+          "source": "Tatoeba",
+          "sourceId": "11910204"
+        },
+        {
+          "en": "I've become thin.",
+          "zh": "\u6211\u53d8\u82d7\u6761\u4e86\u3002",
+          "source": "Tatoeba",
+          "sourceId": "11051452"
+        }
+      ]
+    },
+    {
+      "id": "high",
+      "word": "high",
+      "phonetic": "hai",
+      "meaning": "\u9ad8\u5ea6\uff1b\u9ad8\u5904\\na. \u9ad8\u7684",
+      "definition": "a lofty level or position or degree\\nn. an air mass of higher than normal pressure\\nn. a state of sustained elation\\nn. a state of altered consciousness induced by alcohol or narcotics",
+      "note": "a lofty level or position or degree\\nn. an air mass of higher than normal pressure\\nn. a state of sustained elation\\nn. a state of altered consciousness induced by alcohol or narcotics",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Danger! High voltage.",
+          "zh": "\u5371\u96aa\uff01\u9ad8\u58d3\u96fb\u6d41\u3002",
+          "source": "Tatoeba",
+          "sourceId": "1890311"
+        },
+        {
+          "en": "Prices are high.",
+          "zh": "\u4ef7\u683c\u9ad8\u3002",
+          "source": "Tatoeba",
+          "sourceId": "65710"
+        }
+      ]
+    },
+    {
+      "id": "really",
+      "word": "really",
+      "phonetic": "'ri\u04d9li",
+      "meaning": "\u5b9e\u9645\u4e0a\uff1b\u771f\u5b9e\u5730",
+      "definition": "in accordance with truth or fact or reality\\nr in actual fact\\nr in fact (used as intensifiers or sentence modifiers)\\nr used as intensifiers; `real' is sometimes used informally for `really'; `rattling' is informal",
+      "note": "in accordance with truth or fact or reality\\nr in actual fact\\nr in fact (used as intensifiers or sentence modifiers)\\nr used as intensifiers; `real' is sometimes used informally for `really'; `rattling' is informal",
+      "level": "\u4e2d\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u526f\u8bcd",
+        "\u4e2d\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Really refreshing!",
+          "zh": "\u771f\u723d\u5feb\uff01",
+          "source": "Tatoeba",
+          "sourceId": "7766366"
+        },
+        {
+          "en": "Really good!",
+          "zh": "\u975e\u5e38\u597d\uff01",
+          "source": "Tatoeba",
+          "sourceId": "528546"
+        }
+      ]
+    },
+    {
+      "id": "most",
+      "word": "most",
+      "phonetic": "m\u04d9ust",
+      "meaning": "\u6700\u591a\uff1b\u6700\u5927\\na. \u5927\u591a\u6570\u7684",
+      "definition": "(superlative of `many' used with count nouns and often preceded by `the') quantifier meaning the greatest in number\\na. the superlative of `much' that can be used with mass nouns and is usually preceded by `the'; a quantifier meaning the greatest in amount or extent or degree\\nr. used to form the superlative\\nr. very",
+      "note": "(superlative of `many' used with count nouns and often preceded by `the') quantifier meaning the greatest in number\\na. the superlative of `much' that can be used with mass nouns and is usually preceded by `the'; a quantifier meaning the greatest in amount or extent or degree\\nr. used to form the superlative\\nr. very",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "Most toothpastes contain fluoride.",
+          "zh": "\u5927\u591a\u6570\u7259\u818f\u91cc\u542b\u6709\u6c1f\u5316\u7269\u3002",
+          "source": "Tatoeba",
+          "sourceId": "4456300"
+        },
+        {
+          "en": "Most women enjoy shopping.",
+          "zh": "\u5927\u90e8\u5206\u5973\u6027\u559c\u6b22\u8d2d\u7269\u3002",
+          "source": "Tatoeba",
+          "sourceId": "267305"
+        }
+      ]
+    },
+    {
+      "id": "much",
+      "word": "much",
+      "phonetic": "m\u028ct\u0283",
+      "meaning": "\u5927\u91cf\uff1b\u8bb8\u591a",
+      "definition": "a great amount or extent\\na. (quantifier used with mass nouns) great in quantity or degree or extent\\nr. to a great degree or extent\\nr. very",
+      "note": "a great amount or extent\\na. (quantifier used with mass nouns) great in quantity or degree or extent\\nr. to a great degree or extent\\nr. very",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Nothing much!",
+          "zh": "\u6ca1\u4e8b\u513f\u3002",
+          "source": "Tatoeba",
+          "sourceId": "3272769"
+        },
+        {
+          "en": "Nothing much.",
+          "zh": "\u6ca1\u4e8b\u513f\u3002",
+          "source": "Tatoeba",
+          "sourceId": "864250"
+        }
+      ]
+    },
+    {
+      "id": "family",
+      "word": "family",
+      "phonetic": "'f\u00e6m\u04d9li",
+      "meaning": "\u5bb6\u5ead\uff1b\u5bb6\u4eba",
+      "definition": "a social unit living together\\nn. primary social group; parents and children\\nn. people descended from a common ancestor\\nn. (biology) a taxonomic group containing one or more genera",
+      "note": "a social unit living together\\nn. primary social group; parents and children\\nn. people descended from a common ancestor\\nn. (biology) a taxonomic group containing one or more genera",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "We are family.",
+          "zh": "\u6211\u5011\u662f\u500b\u5bb6\u5ead\u3002",
+          "source": "Tatoeba",
+          "sourceId": "6381553"
+        },
+        {
+          "en": "Please introduce your family.",
+          "zh": "\u8bf7\u4f60\u4ecb\u7ecd\u4e00\u4e0b\u4f60\u7684\u5bb6\u4eba\u3002",
+          "source": "Tatoeba",
+          "sourceId": "11837315"
+        }
+      ]
+    },
+    {
+      "id": "own",
+      "word": "own",
+      "phonetic": "\u04d9un",
+      "meaning": "\u81ea\u5df1\u7684\\na. \u81ea\u5df1\u7684\uff1b\u5ae1\u4eb2\u7684",
+      "definition": "have ownership or possession of\\ns. belonging to or on behalf of a specified person (especially yourself); preceded by a possessive",
+      "note": "have ownership or possession of\\ns. belonging to or on behalf of a specified person (especially yourself); preceded by a possessive",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "I own a house.",
+          "zh": "\u6211\u6709\u4e00\u4e2a\u5bb6\u3002",
+          "source": "Tatoeba",
+          "sourceId": "8821552"
+        },
+        {
+          "en": "I own two cars.",
+          "zh": "\u6211\u6709\u4e24\u8f86\u8f66\u3002",
+          "source": "Tatoeba",
+          "sourceId": "7756008"
+        }
+      ]
+    },
+    {
+      "id": "leave",
+      "word": "leave",
+      "phonetic": "li:v",
+      "meaning": "\u8bb8\u53ef\uff1b\u544a\u522b",
+      "definition": "the period of time during which you are absent from work or duty\\nn. permission to do something\\nv. go away from a place\\nv. go and leave behind, either intentionally or by neglect or forgetfulness",
+      "note": "the period of time during which you are absent from work or duty\\nn. permission to do something\\nv. go away from a place\\nv. go and leave behind, either intentionally or by neglect or forgetfulness",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "Leave quietly.",
+          "zh": "\u9ed8\u9ed8\u5730\u8d70\u3002",
+          "source": "Tatoeba",
+          "sourceId": "12668482"
+        }
+      ]
+    },
+    {
+      "id": "put",
+      "word": "put",
+      "phonetic": "put",
+      "meaning": "\u653e\uff1b\u6446",
+      "definition": "put into a certain place or abstract location\\nv. cause to be in a certain state; cause to be in a certain relation\\nv. attribute or give\\nv. cause (someone) to undergo something",
+      "note": "put into a certain place or abstract location\\nv. cause to be in a certain state; cause to be in a certain relation\\nv. attribute or give\\nv. cause (someone) to undergo something",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u52a8\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "Put it down.",
+          "zh": "\u653e\u4e0b\u3002",
+          "source": "Tatoeba",
+          "sourceId": "41863"
+        },
+        {
+          "en": "Put down your pistol.",
+          "zh": "\u628a\u69cd\u653e\u4e0b\u3002",
+          "source": "Tatoeba",
+          "sourceId": "12744541"
+        }
+      ]
+    },
+    {
+      "id": "old",
+      "word": "old",
+      "phonetic": "\u04d9uld",
+      "meaning": "\u4ee5\u524d\uff1b\u5f80\u6614\\na. \u8001\u7684",
+      "definition": "past times (especially in the phrase `in days of old')\\na. (used especially of persons) having lived for a relatively long time or attained a specific age\\na. of long duration; not new\\ns. (used for emphasis) very familiar",
+      "note": "past times (especially in the phrase `in days of old')\\na. (used especially of persons) having lived for a relatively long time or attained a specific age\\na. of long duration; not new\\ns. (used for emphasis) very familiar",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "He looks old.",
+          "zh": "\u4ed6\u770b\u4e0a\u53bb\u663e\u8001\u3002",
+          "source": "Tatoeba",
+          "sourceId": "8476266"
+        }
+      ]
+    },
+    {
+      "id": "while",
+      "word": "while",
+      "phonetic": "hwail",
+      "meaning": "\u4e00\u4f1a\u513f\uff1b(\u4e00\u6bb5)\u65f6\u95f4\\nconj. \u5f53...\u7684\u65f6\u5019",
+      "definition": "a period of indeterminate length (usually short) marked by some action or condition",
+      "note": "a period of indeterminate length (usually short) marked by some action or condition",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Wait a while.",
+          "zh": "\u7b49\u7b49\u3002",
+          "source": "Tatoeba",
+          "sourceId": "2253851"
+        },
+        {
+          "en": "Stay for a while.",
+          "zh": "\u518d\u5750\u4e00\u4f1a\u513f\u5427\u3002",
+          "source": "Tatoeba",
+          "sourceId": "379611"
+        }
+      ]
+    },
+    {
+      "id": "keep",
+      "word": "keep",
+      "phonetic": "ki:p",
+      "meaning": "\u751f\u8ba1\uff1b\u7ef4\u6301",
+      "definition": "the main tower within the walls of a medieval castle or fortress\\nv. keep in a certain state, position, or activity; e.g., \"keep clean\"\\nv. retain possession of\\nv. look after; be the keeper of; have charge of",
+      "note": "the main tower within the walls of a medieval castle or fortress\\nv. keep in a certain state, position, or activity; e.g., \"keep clean\"\\nv. retain possession of\\nv. look after; be the keeper of; have charge of",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "Keep talking!",
+          "zh": "\u7e7c\u7e8c\u8ac7\u8ad6\uff01",
+          "source": "Tatoeba",
+          "sourceId": "11516569"
+        },
+        {
+          "en": "Keep dreaming.",
+          "zh": "\u4f60\u60f3\u5f97\u7f8e\uff01",
+          "source": "Tatoeba",
+          "sourceId": "10061671"
+        }
+      ]
+    },
+    {
+      "id": "why",
+      "word": "why",
+      "phonetic": "hwai",
+      "meaning": "\u4e3a\u4ec0\u4e48\\nn. \u539f\u56e0\uff1b\u7406\u7531",
+      "definition": "the cause or intention underlying an action or situation, especially in the phrase `the whys and wherefores'",
+      "note": "the cause or intention underlying an action or situation, especially in the phrase `the whys and wherefores'",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u526f\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Teach me why.",
+          "zh": "\u8001\u5e08\u6559\u6211\u7684\u3002",
+          "source": "Tatoeba",
+          "sourceId": "10643778"
+        },
+        {
+          "en": "Why learn French?",
+          "zh": "\u70ba\u4ec0\u9ebc\u8981\u5b78\u6cd5\u8a9e\uff1f",
+          "source": "Tatoeba",
+          "sourceId": "7989483"
+        }
+      ]
+    },
+    {
+      "id": "let",
+      "word": "let",
+      "phonetic": "let",
+      "meaning": "\u8ba9\uff1b\u5047\u8bbe",
+      "definition": "a serve that strikes the net before falling into the receiver's court; the ball must be served again\\nv. make it possible through a specific action or lack of action for something to happen\\nv. actively cause something to happen\\nv. leave unchanged",
+      "note": "a serve that strikes the net before falling into the receiver's court; the ball must be served again\\nv. make it possible through a specific action or lack of action for something to happen\\nv. actively cause something to happen\\nv. leave unchanged",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u52a8\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "Let me think!",
+          "zh": "\u8b93\u6211\u60f3\u4e00\u60f3\u3002",
+          "source": "Tatoeba",
+          "sourceId": "9171235"
+        },
+        {
+          "en": "Let it update.",
+          "zh": "\u8b93\u5b83\u66f4\u65b0\u3002",
+          "source": "Tatoeba",
+          "sourceId": "8633834"
+        }
+      ]
+    },
+    {
+      "id": "group",
+      "word": "group",
+      "phonetic": "gru:p",
+      "meaning": "\u56e2\u4f53\uff1b\u7ec4",
+      "definition": "any number of entities (members) considered as a unit\\nn. (chemistry) two or more atoms bound together as a single unit and forming part of a molecule\\nn. a set that is closed, associative, has an identity element and every element has an inverse\\nv. arrange into a group or groups",
+      "note": "any number of entities (members) considered as a unit\\nn. (chemistry) two or more atoms bound together as a single unit and forming part of a molecule\\nn. a set that is closed, associative, has an identity element and every element has an inverse\\nv. arrange into a group or groups",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "He strayed from his group.",
+          "zh": "\u4ed6\u4e0e\u4ed6\u7684\u56e2\u7ed3\u8d70\u6563\u4e86",
+          "source": "Tatoeba",
+          "sourceId": "289773"
+        },
+        {
+          "en": "What's your blood group?",
+          "zh": "\u4f60\u7684\u8840\u578b\u662f\u4ec0\u4e48\uff1f",
+          "source": "Tatoeba",
+          "sourceId": "70730"
+        }
+      ]
+    },
+    {
+      "id": "begin",
+      "word": "begin",
+      "phonetic": "bi'gin",
+      "meaning": "\u5f00\u59cb\\n[\u8ba1] \u5f00\u59cb",
+      "definition": "Israeli statesman (born in Russia) who (as prime minister of Israel) negotiated a peace treaty with Anwar Sadat (then the president of Egypt) (1913-1992)\\nv. have a beginning, in a temporal, spatial, or evaluative sense\\nv. set in motion, cause to start\\nv. begin to speak or say",
+      "note": "Israeli statesman (born in Russia) who (as prime minister of Israel) negotiated a peace treaty with Anwar Sadat (then the president of Egypt) (1913-1992)\\nv. have a beginning, in a temporal, spatial, or evaluative sense\\nv. set in motion, cause to start\\nv. begin to speak or say",
+      "level": "\u9ad8\u8003",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u52a8\u8bcd",
+        "\u9ad8\u8003"
+      ],
+      "examples": [
+        {
+          "en": "Begin working.",
+          "zh": "\u958b\u59cb\u5de5\u4f5c\u3002",
+          "source": "Tatoeba",
+          "sourceId": "11929338"
+        },
+        {
+          "en": "Begin searching.",
+          "zh": "\u958b\u59cb\u641c\u5c0b\u3002",
+          "source": "Tatoeba",
+          "sourceId": "11928339"
+        }
+      ]
+    },
+    {
+      "id": "country",
+      "word": "country",
+      "phonetic": "'k\u028cntri",
+      "meaning": "\u56fd\u5bb6\uff1b\u4e61\u6751",
+      "definition": "the territory occupied by a nation\\nn. an area outside of cities and towns",
+      "note": "the territory occupied by a nation\\nn. an area outside of cities and towns",
+      "level": "IELTS",
+      "tags": [
+        "\u9ad8\u9891",
+        "\u540d\u8bcd",
+        "IELTS"
+      ],
+      "examples": [
+        {
+          "en": "Tom left the country.",
+          "zh": "\u6c64\u59c6\u51fa\u56fd\u4e86\u3002",
+          "source": "Tatoeba",
+          "sourceId": "6849038"
+        },
+        {
+          "en": "Taiwan is a country.",
+          "zh": "\u53f0\u6e7e\u662f\u4e00\u4e2a\u56fd\u5bb6\u3002",
+          "source": "Tatoeba",
+          "sourceId": "6620655"
+        }
+      ]
+    }
+  ]
+}
