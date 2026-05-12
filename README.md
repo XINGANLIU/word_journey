@@ -1,115 +1,174 @@
-# Word Journey | 词旅背单词
+<!-- omit in toc -->
+# 词旅背单词 · Word Journey
 
-一个用 Flutter 实现的跨平台背单词 MVP，目标是用一套代码同时覆盖 Android 和 Windows，并逐步迭代成接近“墨墨背单词”体验的开源项目。
+<p align="center">
+  <img src="https://img.shields.io/badge/Flutter-3.41-blue?logo=flutter" alt="Flutter">
+  <img src="https://img.shields.io/badge/Dart-3.11-blue?logo=dart" alt="Dart">
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Android-brightgreen" alt="Platform">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
+</p>
 
-## 当前已经完成
+> 一套代码，Windows + Android 双端运行。内置 3 万词汇、间隔重复算法、听写模式、词根词缀分析。
 
-- Android + Windows 跨端工程骨架
-- 今日复习页：单词卡片、释义展开、三档记忆反馈
-- 英语发音播放：点击单词旁边的喇叭即可朗读
-- 自动发音：切到新复习单词时可自动播放读音
-- 简化版间隔复习调度：`不认识 / 有点模糊 / 认识`
-- 本地学习记录持久化：使用 `shared_preferences`
-- 词书总览页：查看新词、复习中、已掌握状态
-- 词书搜索与筛选：可按英文、中文释义、标签和学习状态查找
-- 统计页：最近 7 天复习量、今日保留率、学习连击
-- 设置页：每日新词上限、重置本地数据
+---
 
-## 技术方案
+<!-- omit in toc -->
+## 目录
 
-- Flutter 3
-- Dart 3
-- 本地存储：`shared_preferences`
-- 当前数据源：本地 starter 词库资产
-- 词义来源：ECDICT
-- 例句来源：Tatoeba
+- [功能概览](#功能概览)
+- [快速开始](#快速开始)
+- [项目结构](#项目结构)
+- [词库说明](#词库说明)
+- [打包发布](#打包发布)
+- [技术栈](#技术栈)
+- [License](#license)
 
-这样选型的原因很直接：
+---
 
-- Android 和 Windows 都能共用一套 UI 和业务逻辑
-- 后面可以继续扩展 Web、macOS
-- 很适合个人项目先做 MVP，再逐步接入云同步和账号系统
+## 功能概览
+
+### 📖 学习模式
+
+| 功能 | 说明 |
+|------|------|
+| 间隔复习 | SM-2 算法，根据记忆反馈自动调整复习间隔 |
+| 三档评级 | 不认识 / 有点模糊 / 认识，科学调度 |
+| 单词发音 | 点击喇叭或自动播放，支持 TTS |
+| 卡片释义 | 点击展开释义、例句、标签 |
+| 滑动手势 | 左滑「忘记」、右滑「认识」 |
+
+### 📚 词库管理
+
+| 功能 | 说明 |
+|------|------|
+| 多词书 | 高考 · 四级 · 六级 · 考研 · 雅思 · 托福 · 10000 常见词 |
+| 词书选择 | 首次启动自由勾选，随时可更换 |
+| 词典搜索 | 搜索英文、中文、标签，跨全部词书 |
+| 单词详情 | 点击单词查看词根词缀、同义词、反义词 |
+
+### 🎧 听写 & 拼写
+
+| 功能 | 说明 |
+|------|------|
+| 听写模式 | 听发音 → 拼写单词 → 即时反馈 |
+| 拼写测试 | 看中文释义 → 输入英文 → 检查 |
+| 正确率统计 | 实时显示正确率 |
+
+### 📊 数据 & 设置
+
+| 功能 | 说明 |
+|------|------|
+| 学习统计 | 复习量、保留率、连击天数、7 天趋势图 |
+| 收藏单词 | 收藏夹独立标签页 |
+| 每日新词上限 | 5~30 可调 |
+| 导出/恢复备份 | JSON 文件，跨设备同步 |
+
+---
+
+## 快速开始
+
+### 环境要求
+
+- **Flutter** ≥ 3.41
+- **Windows**：Visual Studio + Developer Mode
+- **Android**：Android Studio + SDK 36
+
+### 运行
+
+```bash
+git clone https://github.com/XINGANLIU/word_journey.git
+cd word_journey
+flutter pub get
+
+# Windows
+flutter run -d windows
+
+# Android
+flutter run -d android
+```
+
+---
 
 ## 项目结构
 
-```text
+```
 lib/
-  app.dart                     # 应用壳、页面与主要 UI
-  controllers/study_controller.dart
-  data/dictionary_repository.dart
-  models/study_models.dart     # 单词、进度、统计模型
-assets/data/
-  starter_dictionary.json      # ECDICT + Tatoeba 生成的本地词库
-tool/
-  build_starter_dictionary.py  # 重新生成 starter 词库的脚本
-test/
-  widget_test.dart
+├── main.dart                          # 入口，首次引导逻辑
+├── app.dart                           # 主界面、复习页、词书页、统计页、设置页
+├── controllers/
+│   └── study_controller.dart          # 核心控制器：调度、进度、收藏、备份
+├── models/
+│   └── study_models.dart              # 数据模型：单词、进度、统计
+├── data/
+│   ├── dictionary_repository.dart     # 词库加载（多词书 + 自定义导入）
+│   └── word_analysis.dart             # 词根词缀、同义词、反义词数据库
+├── pages/
+│   ├── onboarding_page.dart           # 首次启动词书选择页
+│   ├── add_words_page.dart            # 词典搜索 / 单词添加页
+│   ├── dictation_page.dart            # 听写模式页
+│   ├── word_detail_page.dart          # 单词详情页（词根/同反义词）
+├── services/
+│   ├── pronunciation_service.dart     # TTS 发音服务
+│   └── notification_service.dart      # 每日学习提醒
+assets/data/word_books/               # 词库 JSON 文件
+tool/                                  # Python 词库生成脚本
 ```
 
-## 本地运行
-
-```bash
-flutter pub get
-flutter run -d android
-flutter run -d windows
-```
-
-## 你这台机器当前需要补的环境
-
-根据 `flutter doctor -v` 的结果，今天也就是 2026-05-10，这台机器还有两处环境需要补，之后才能顺利打包：
-
-- Windows 桌面端缺少 `Visual Studio` 和 `Desktop development with C++`
-- Android 端缺少 `cmdline-tools`，并且还没有接受 Android licenses
-
-另外，`shared_preferences` 这类插件在 Windows 上开发时通常还要求打开系统的 `Developer Mode`，否则 Flutter 生成插件符号链接时会报错。
+---
 
 ## 词库说明
 
-- `assets/data/starter_dictionary.json` 当前内置 60 个 starter 词条
-- 每个词条包含：英文、中文释义、音标、1 到 2 条英文例句、中文例句
-- 词义来自 [ECDICT](https://github.com/skywind3000/ECDICT)
-- 例句来自 [Tatoeba](https://tatoeba.org/)
+| 词书 | 单词数 | 来源 |
+|------|--------|------|
+| 高考词汇 | 3,500 | ECDICT |
+| 四级核心词 | 4,500 | ECDICT |
+| 六级核心词 | 5,394 | ECDICT |
+| 考研词汇 | 4,800 | ECDICT |
+| 雅思词汇 | 5,010 | ECDICT |
+| 托福词汇 | 6,937 | ECDICT |
+| 常见 10000 词 | 10,000 | ECDICT |
+| **去重总计** | **~30,000** | |
 
-如果你想扩充词量，可以重新运行：
+> 词义来自 [ECDICT](https://github.com/skywind3000/ECDICT)，例句由 ECDICT 定义字段提取 + 模板生成。
 
-```bash
-python tool/build_starter_dictionary.py
-```
-
-## 下一步最值得做的功能
-
-如果你想把它继续做成真正能长期使用的软件，我建议按这个顺序往下走：
-
-1. 自定义词库导入
-2. 账号登录与云同步
-3. 搜索、收藏、生词本
-4. 发音播放与拼写测试
-5. 学习计划与遗忘曲线可视化
-6. GitHub Actions 自动构建 Android APK 和 Windows 安装包
-
-## 发布到 GitHub
-
-在项目目录执行：
+### 重新生成词库
 
 ```bash
-git init
-git add .
-git commit -m "feat: initialize word journey MVP"
+# 确保已下载 ECDICT（首次运行自动下载）
+python tool/build_word_books.py     # 生成分类词书
+python tool/build_common_10000.py   # 生成 10000 常见词
+python tool/add_examples.py         # 补充例句
 ```
 
-然后在 GitHub 创建新仓库，再执行：
+---
+
+## 打包发布
 
 ```bash
-git remote add origin <你的仓库地址>
-git branch -M main
-git push -u origin main
+# Windows exe
+flutter build windows --release
+# 产物: build\windows\x64\runner\Release\
+
+# Android APK
+flutter build apk --release
+# 产物: build\app\outputs\flutter-apk\app-release.apk
 ```
 
-## 适合继续迭代的方向
+---
 
-这个仓库现在更像一个稳固的起点，而不是最终产品。你如果愿意，我下一步可以继续直接帮你做下面任意一项：
+## 技术栈
 
-- 接入你自己的真实词书
-- 做登录和云同步
-- 做更像墨墨背单词的 UI 和交互
-- 配好 GitHub Actions 自动打包发布
+| 技术 | 用途 |
+|------|------|
+| Flutter 3 | 跨平台 UI 框架 |
+| shared_preferences | 本地数据持久化 |
+| flutter_tts | TTS 语音朗读 |
+| flutter_local_notifications | 每日学习提醒 |
+| file_picker | 文件导入/导出 |
+| ECDICT | 词库数据源 |
+
+---
+
+## License
+
+MIT © [XINGANLIU](https://github.com/XINGANLIU)
