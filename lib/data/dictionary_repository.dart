@@ -10,7 +10,7 @@ const _customDictPathKey = 'word_journey.custom_dict_path';
 const _selectedBooksKey = 'word_journey.selected_books';
 
 class DictionaryRepository {
-  const DictionaryRepository();
+  DictionaryRepository();
 
   static const _defaultAssetPath = 'assets/data/starter_dictionary.json';
 
@@ -23,6 +23,10 @@ class DictionaryRepository {
     'toefl': 'assets/data/word_books/toefl.json',
     'common_10000': 'assets/data/word_books/common_10000.json',
   };
+
+  // Cache parsed words to avoid re-reading assets
+  final Map<String, List<VocabWord>> _cache = {};
+  List<VocabWord>? _allWordsCache;
 
   Future<List<VocabWord>> loadWords() async {
     final prefs = await SharedPreferences.getInstance();
@@ -67,8 +71,29 @@ class DictionaryRepository {
   }
 
   Future<List<VocabWord>> _loadFromAsset(String assetPath) async {
+    if (_cache.containsKey(assetPath)) return _cache[assetPath]!;
     final raw = await rootBundle.loadString(assetPath);
-    return _parseWords(raw);
+    final words = _parseWords(raw);
+    _cache[assetPath] = words;
+    return words;
+  }
+
+  /// Load ALL words from all books for dictionary search
+  Future<List<VocabWord>> loadAllWords() async {
+    if (_allWordsCache != null) return _allWordsCache!;
+    final allWords = <String, VocabWord>{};
+    for (final assetPath in _bookAssetPaths.values) {
+      try {
+        final words = await _loadFromAsset(assetPath);
+        for (final word in words) {
+          if (!allWords.containsKey(word.id)) {
+            allWords[word.id] = word;
+          }
+        }
+      } catch (_) { /* skip failed books */ }
+    }
+    _allWordsCache = allWords.values.toList();
+    return _allWordsCache!;
   }
 
   Future<List<VocabWord>> _loadFromPath(String path) async {
@@ -99,22 +124,6 @@ class DictionaryRepository {
       }
     }
     return counts;
-  }
-
-  /// Load ALL words from all books for dictionary search
-  Future<List<VocabWord>> loadAllWords() async {
-    final allWords = <String, VocabWord>{};
-    for (final assetPath in _bookAssetPaths.values) {
-      try {
-        final words = await _loadFromAsset(assetPath);
-        for (final word in words) {
-          if (!allWords.containsKey(word.id)) {
-            allWords[word.id] = word;
-          }
-        }
-      } catch (_) {}
-    }
-    return allWords.values.toList();
   }
 
   Future<void> importCustomDictionary(String path) async {

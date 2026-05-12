@@ -35,6 +35,7 @@ class _AddWordsPageState extends State<AddWordsPage> {
   Future<void> _loadAllWords() async {
     setState(() => _loadingAll = true);
     await widget.controller.loadAllWords();
+    if (!mounted) return;
     _allWords = widget.controller.allWords;
     _loadTags();
     setState(() => _loadingAll = false);

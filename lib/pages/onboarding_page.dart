@@ -71,6 +71,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Future<void> _loadWordCounts() async {
     final repo = DictionaryRepository();
     final counts = await repo.getBookWordCounts();
+    if (!mounted) return;
     setState(() {
       _bookWordCounts = counts;
       _loading = false;

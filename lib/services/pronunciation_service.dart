@@ -4,6 +4,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 class PronunciationService extends ChangeNotifier {
   FlutterTts? _tts;
   bool _configured = false;
+  bool _disposed = false;
   String? _speakingWord;
 
   String? get speakingWord => _speakingWord;
@@ -14,7 +15,7 @@ class PronunciationService extends ChangeNotifier {
     final tts = await _ensureConfigured();
     await tts.stop();
     _speakingWord = word;
-    notifyListeners();
+    if (!_disposed) notifyListeners();
     await tts.speak(word);
   }
 
@@ -43,7 +44,7 @@ class PronunciationService extends ChangeNotifier {
     }
 
     tts.setStartHandler(() {
-      notifyListeners();
+      if (!_disposed) notifyListeners();
     });
     tts.setCompletionHandler(_clearSpeakingState);
     tts.setCancelHandler(_clearSpeakingState);
@@ -66,11 +67,12 @@ class PronunciationService extends ChangeNotifier {
       return;
     }
     _speakingWord = null;
-    notifyListeners();
+    if (!_disposed) notifyListeners();
   }
 
   @override
   void dispose() {
+    _disposed = true;
     stop();
     super.dispose();
   }

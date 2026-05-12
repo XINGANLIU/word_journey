@@ -17,7 +17,7 @@ const _studyWordsStorageKey = 'word_journey.study_words.v1';
 
 class StudyController extends ChangeNotifier {
   StudyController({DictionaryRepository? repository})
-    : _repository = repository ?? const DictionaryRepository();
+    : _repository = repository ?? DictionaryRepository();
 
   final DictionaryRepository _repository;
   List<VocabWord> _words = const [];
@@ -38,6 +38,8 @@ class StudyController extends ChangeNotifier {
   bool get autoPronounce => _autoPronounce;
 
   List<VocabWord> get words => List.unmodifiable(_words);
+
+  int get totalWordsInBooks => _words.length;
 
   Set<String> get bookmarks => Set.unmodifiable(_bookmarks);
 
@@ -203,8 +205,8 @@ class StudyController extends ChangeNotifier {
   }
 
   Future<void> setDailyNewLimit(int value) async {
-    _dailyNewLimit = value;
-    await _preferences?.setInt(_dailyLimitStorageKey, value);
+    _dailyNewLimit = value.clamp(1, 999);
+    await _preferences?.setInt(_dailyLimitStorageKey, _dailyNewLimit);
     notifyListeners();
   }
 
@@ -464,13 +466,15 @@ class StudyController extends ChangeNotifier {
 
     switch (rating) {
       case RecallRating.forgot:
+        // Ebbinghaus: forgotten → short intervals, frequent review
         final newLapses = current.lapses + 1;
         final newEase = math.max(1.3, current.easeFactor - 0.2);
-        final newInterval = math.max(1, (current.intervalDays * 0.5).round());
+        // Re-review in 5 min, then 30 min, then 1 day, 2 days...
+        final reviewMinutes = current.lapses == 0 ? 5 : 30;
         return current.copyWith(
-          nextReviewAt: now.add(const Duration(minutes: 10)),
+          nextReviewAt: now.add(Duration(minutes: reviewMinutes)),
           lastReviewedAt: now,
-          intervalDays: newInterval,
+          intervalDays: 0,
           totalReviews: newTotalReviews,
           familiarity: math.max(0, current.familiarity - 1),
           easyStreak: 0,
@@ -479,19 +483,27 @@ class StudyController extends ChangeNotifier {
           lapses: newLapses,
         );
       case RecallRating.hesitant:
-        final newEase = math.max(1.3, current.easeFactor - 0.15);
-        int newInterval;
+        // Ebbinghaus: medium difficulty → standard intervals
+        // 1d → 2d → 4d → 7d → 15d
+        final newEase = math.max(1.3, current.easeFactor - 0.1);
+        int nextDays;
         if (current.intervalDays == 0) {
-          newInterval = 1;
+          nextDays = 1;
         } else if (current.intervalDays == 1) {
-          newInterval = 3;
+          nextDays = 2;
+        } else if (current.intervalDays <= 3) {
+          nextDays = 4;
+        } else if (current.intervalDays <= 6) {
+          nextDays = 7;
+        } else if (current.intervalDays <= 10) {
+          nextDays = 15;
         } else {
-          newInterval = math.max(1, (current.intervalDays * newEase).round());
+          nextDays = math.max(current.intervalDays, (current.intervalDays * 1.5).round());
         }
         return current.copyWith(
-          nextReviewAt: _nextStudyMoment(now.add(Duration(days: newInterval))),
+          nextReviewAt: _nextStudyMoment(now.add(Duration(days: nextDays))),
           lastReviewedAt: now,
-          intervalDays: newInterval,
+          intervalDays: nextDays,
           totalReviews: newTotalReviews,
           familiarity: math.min(6, current.familiarity + 1),
           easyStreak: 0,
@@ -499,22 +511,29 @@ class StudyController extends ChangeNotifier {
           easeFactor: newEase,
         );
       case RecallRating.know:
-        final bonus = current.easyStreak >= 2 ? 1.3 : 1.0;
+        // Ebbinghaus: easy → longer intervals
+        // 1d → 3d → 7d → 15d → 30d → 60d
+        final bonus = current.easyStreak >= 2 ? 1.5 : 1.0;
         final newEase = math.min(2.5, current.easeFactor + 0.15);
-        int newInterval;
+        int nextDays;
         if (current.intervalDays == 0) {
-          newInterval = 4;
+          nextDays = 1;
         } else if (current.intervalDays == 1) {
-          newInterval = 6;
+          nextDays = 3;
+        } else if (current.intervalDays <= 3) {
+          nextDays = 7;
+        } else if (current.intervalDays <= 10) {
+          nextDays = 15;
+        } else if (current.intervalDays <= 20) {
+          nextDays = 30;
         } else {
-          newInterval =
-              (current.intervalDays * newEase * bonus).round();
-          newInterval = math.max(current.intervalDays + 1, newInterval);
+          nextDays = (current.intervalDays * bonus * 2.0).round();
+          nextDays = math.max(current.intervalDays + 1, nextDays);
         }
         return current.copyWith(
-          nextReviewAt: _nextStudyMoment(now.add(Duration(days: newInterval))),
+          nextReviewAt: _nextStudyMoment(now.add(Duration(days: nextDays))),
           lastReviewedAt: now,
-          intervalDays: newInterval,
+          intervalDays: nextDays,
           totalReviews: newTotalReviews,
           familiarity: math.min(8, current.familiarity + 2),
           easyStreak: current.easyStreak + 1,

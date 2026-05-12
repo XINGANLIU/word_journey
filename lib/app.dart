@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'controllers/study_controller.dart';
 import 'models/study_models.dart';
@@ -27,7 +28,7 @@ class _WordJourneyHomeState extends State<WordJourneyHome> {
   late final Future<void> _loadFuture;
   int _currentIndex = 0;
 
-  static const _titles = ['今日复习', '词书总览', '我的收藏', '听写模式', '拼写测试', '学习统计', '学习设置'];
+  static const _titles = ['学习', '选词', '统计', '我的'];
 
   @override
   void initState() {
@@ -42,6 +43,14 @@ class _WordJourneyHomeState extends State<WordJourneyHome> {
     super.dispose();
   }
 
+  void _openDictionary(String word) async {
+    final url = 'https://dictionary.cambridge.org/zhs/%E8%AF%8D%E5%85%B8/%E8%8B%B1%E8%AF%AD-%E6%B1%89%E8%AF%AD-%E7%AE%80%E4%BD%93/$word';
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
@@ -50,14 +59,24 @@ class _WordJourneyHomeState extends State<WordJourneyHome> {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Scaffold(
             body: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('正在装载你的背词节奏...'),
-                ],
-              ),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                CircularProgressIndicator(), SizedBox(height: 16), Text('正在加载词库...'),
+              ]),
+            ),
+          );
+        }
+        if (snapshot.hasError) {
+          return Scaffold(
+            body: Center(
+              child: Padding(padding: const EdgeInsets.all(32), child: Column(mainAxisSize: MainAxisSize.min, children: [
+                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const SizedBox(height: 16),
+                Text('加载失败', style: Theme.of(context).textTheme.headlineSmall),
+                const SizedBox(height: 8),
+                Text('${snapshot.error}', style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center),
+                const SizedBox(height: 24),
+                FilledButton.icon(onPressed: () { setState(() { _loadFuture = _controller.load(); }); }, icon: const Icon(Icons.refresh), label: const Text('重试')),
+              ])),
             ),
           );
         }
@@ -67,106 +86,65 @@ class _WordJourneyHomeState extends State<WordJourneyHome> {
           builder: (context, child) {
             return Scaffold(
               appBar: AppBar(
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('词旅背单词'),
-                    Text(
-                      _titles[_currentIndex],
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ],
-                ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.add_circle_outline),
-                    tooltip: '从词库添加单词',
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => AddWordsPage(
-                            controller: _controller,
-                            pronunciation: _pronunciation,
-                          ),
+                title: Text('词旅背单词 · ${_titles[_currentIndex]}'),
+                centerTitle: false,
+                actions: _currentIndex == 0
+                    ? [
+                        IconButton(
+                          icon: const Icon(Icons.language),
+                          tooltip: '剑桥词典查词',
+                          onPressed: () {
+                            if (_controller.currentItem != null) {
+                              _openDictionary(_controller.currentItem!.word.word);
+                            }
+                          },
                         ),
-                      );
-                    },
-                  ),
-                ],
+                        IconButton(
+                          icon: const Icon(Icons.add_circle_outline),
+                          tooltip: '添加单词',
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => AddWordsPage(
+                                  controller: _controller,
+                                  pronunciation: _pronunciation,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ]
+                    : null,
               ),
               body: SafeArea(
                 child: IndexedStack(
                   index: _currentIndex,
                   children: [
-                    ReviewTab(
-                      controller: _controller,
-                      currentItem: _controller.currentItem,
-                      pronunciation: _pronunciation,
-                    ),
-                    WordbookTab(
+                    StudyTab(
                       controller: _controller,
                       pronunciation: _pronunciation,
+                      openDictionary: _openDictionary,
                     ),
-                    BookmarksTab(
-                      controller: _controller,
-                      pronunciation: _pronunciation,
-                    ),
-                    DictationPage(
-                      controller: _controller,
-                      pronunciation: _pronunciation,
-                    ),
-                    SpellingTestTab(
+                    _WordSelectTab(
                       controller: _controller,
                       pronunciation: _pronunciation,
                     ),
                     StatsTab(controller: _controller),
-                    SettingsTab(controller: _controller),
+                    _MeTab(
+                      controller: _controller,
+                      pronunciation: _pronunciation,
+                    ),
                   ],
                 ),
               ),
               bottomNavigationBar: NavigationBar(
                 selectedIndex: _currentIndex,
-                onDestinationSelected: (value) {
-                  setState(() {
-                    _currentIndex = value;
-                  });
-                },
+                onDestinationSelected: (v) => setState(() => _currentIndex = v),
                 destinations: const [
-                  NavigationDestination(
-                    icon: Icon(Icons.auto_stories_outlined),
-                    selectedIcon: Icon(Icons.auto_stories),
-                    label: '复习',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.menu_book_outlined),
-                    selectedIcon: Icon(Icons.menu_book),
-                    label: '词书',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.bookmark_outline),
-                    selectedIcon: Icon(Icons.bookmark),
-                    label: '收藏',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.hearing_outlined),
-                    selectedIcon: Icon(Icons.hearing),
-                    label: '听写',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.spellcheck_outlined),
-                    selectedIcon: Icon(Icons.spellcheck),
-                    label: '拼写',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.query_stats_outlined),
-                    selectedIcon: Icon(Icons.query_stats),
-                    label: '统计',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.tune_outlined),
-                    selectedIcon: Icon(Icons.tune),
-                    label: '设置',
-                  ),
+                  NavigationDestination(icon: Icon(Icons.auto_stories_outlined), selectedIcon: Icon(Icons.auto_stories), label: '学习'),
+                  NavigationDestination(icon: Icon(Icons.add_circle_outline), selectedIcon: Icon(Icons.add_circle), label: '选词'),
+                  NavigationDestination(icon: Icon(Icons.query_stats_outlined), selectedIcon: Icon(Icons.query_stats), label: '统计'),
+                  NavigationDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person), label: '我的'),
                 ],
               ),
             );
@@ -177,949 +155,564 @@ class _WordJourneyHomeState extends State<WordJourneyHome> {
   }
 }
 
-class ReviewTab extends StatefulWidget {
-  const ReviewTab({
-    super.key,
-    required this.controller,
-    required this.currentItem,
-    required this.pronunciation,
-  });
-
+// ============================================================
+// 学习页
+// ============================================================
+class StudyTab extends StatefulWidget {
+  const StudyTab({required this.controller, required this.pronunciation, required this.openDictionary, super.key});
   final StudyController controller;
-  final StudyQueueItem? currentItem;
   final PronunciationService pronunciation;
+  final void Function(String word) openDictionary;
 
   @override
-  State<ReviewTab> createState() => _ReviewTabState();
+  State<StudyTab> createState() => _StudyTabState();
 }
 
-class _ReviewTabState extends State<ReviewTab> {
+class _StudyTabState extends State<StudyTab> {
   bool _showMeaning = false;
   bool _submitting = false;
+  String _statusText = '请回忆发音和释义';
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _maybeAutoPronounce(widget.currentItem);
+      _maybeAutoPronounce();
     });
   }
 
   @override
-  void didUpdateWidget(covariant ReviewTab oldWidget) {
+  void didUpdateWidget(covariant StudyTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.currentItem?.word.id != widget.currentItem?.word.id) {
-      _showMeaning = false;
+    if (oldWidget.controller.currentItem?.word.id != widget.controller.currentItem?.word.id) {
+      setState(() {
+        _showMeaning = false;
+        _statusText = '请回忆发音和释义';
+      });
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _maybeAutoPronounce(widget.currentItem);
+        _maybeAutoPronounce();
       });
     }
   }
 
-  void _toggleMeaning() {
-    setState(() {
-      _showMeaning = !_showMeaning;
-    });
-  }
-
-  void _maybeAutoPronounce(StudyQueueItem? item) {
-    if (!mounted || item == null || !widget.controller.autoPronounce) {
-      return;
-    }
+  void _maybeAutoPronounce() {
+    final item = widget.controller.currentItem;
+    if (!mounted || item == null || !widget.controller.autoPronounce) return;
     widget.pronunciation.speak(item.word.word);
   }
 
   Future<void> _submit(RecallRating rating) async {
-    final item = widget.currentItem;
-    if (item == null || _submitting) {
-      return;
-    }
-
+    final item = widget.controller.currentItem;
+    if (item == null || _submitting) return;
     HapticFeedback.lightImpact();
-    setState(() {
-      _submitting = true;
-    });
-
+    setState(() => _submitting = true);
     await widget.controller.answer(item, rating);
-
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      _submitting = false;
-    });
-  }
-
-  Widget _buildWordCard(ThemeData theme, StudyQueueItem currentItem) {
-    final isBookmarked = widget.controller.isBookmarked(currentItem.word.id);
-    return _SectionCard(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: [
-                _StatusChip(progress: currentItem.progress),
-                _MetricPill(
-                  icon: Icons.timer_outlined,
-                  label: currentItem.isNew
-                      ? '新词引入'
-                      : '上次复习 ${_timeAgoLabel(currentItem.progress?.lastReviewedAt)}',
-                ),
-                if (widget.controller.autoPronounce)
-                  const _PlainPill(
-                    icon: Icons.volume_up_outlined,
-                    label: '自动发音已开启',
-                  ),
-              ],
-            ),
-            const SizedBox(height: 22),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    currentItem.word.word,
-                    style: theme.textTheme.displaySmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.4,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                _BookmarkButton(
-                  isBookmarked: isBookmarked,
-                  onTap: () => widget.controller.toggleBookmark(currentItem.word.id),
-                ),
-                const SizedBox(width: 8),
-                _PronunciationButton(
-                  pronunciation: widget.pronunciation,
-                  word: currentItem.word.word,
-                  size: 56,
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${currentItem.word.phonetic} · ${currentItem.word.level}',
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: theme.colorScheme.primary,
-              ),
-            ),
-            const SizedBox(height: 22),
-            _SectionTint(
-              child: _ExamplesPanel(examples: currentItem.word.examples),
-            ),
-            const SizedBox(height: 18),
-            AnimatedSize(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              alignment: Alignment.topCenter,
-              child: _showMeaning
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      currentItem.word.meaning,
-                                      style: theme.textTheme.headlineSmall?.copyWith(
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ),
-                                  FilledButton.tonalIcon(
-                                    onPressed: _toggleMeaning,
-                                    icon: const Icon(Icons.visibility_off_outlined, size: 18),
-                                    label: const Text('收起'),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              if (currentItem.word.definition.isNotEmpty)
-                                Text(
-                                  currentItem.word.definition,
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    height: 1.55,
-                                  ),
-                                ),
-                              if (currentItem.word.note.isNotEmpty &&
-                                  currentItem.word.note != currentItem.word.definition) ...[
-                                const SizedBox(height: 8),
-                                Text(
-                                  currentItem.word.note,
-                                  style: theme.textTheme.bodyLarge?.copyWith(height: 1.6),
-                                ),
-                              ],
-                              const SizedBox(height: 12),
-                              Wrap(
-                                spacing: 8,
-                                runSpacing: 8,
-                                children: currentItem.word.tags
-                                    .map((tag) => Chip(
-                                          label: Text(tag),
-                                          backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                                        ))
-                                    .toList(),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    )
-                  : SizedBox(
-                      width: double.infinity,
-                      child: FilledButton.tonalIcon(
-                        onPressed: _toggleMeaning,
-                        icon: const Icon(Icons.visibility_outlined),
-                        label: const Text('显示释义和提示'),
-                      ),
-                    ),
-            ),
-          ],
-        ),
-      ),
-    );
+    if (!mounted) return;
+    setState(() => _submitting = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentItem = widget.currentItem;
+    final item = widget.controller.currentItem;
     final theme = Theme.of(context);
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-      children: [
-        _HeroPanel(controller: widget.controller),
-        const SizedBox(height: 18),
-        if (currentItem == null)
-          _SectionCard(
+    if (item == null) {
+      return ListView(
+        padding: const EdgeInsets.all(24),
+        children: [
+          _HeroCard(controller: widget.controller),
+          const SizedBox(height: 24),
+          _Card(
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(32),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '今天的复习先告一段落',
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    '你已经完成了今天该出现的单词。接下来可以去词书页搜索和回顾，或者调整每天的新词量。',
-                    style: theme.textTheme.bodyLarge,
-                  ),
-                  const SizedBox(height: 20),
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: [
-                      _MetricPill(
-                        icon: Icons.bolt,
-                        label: '今日完成 ${widget.controller.reviewedToday}',
-                      ),
-                      _MetricPill(
-                        icon: Icons.local_fire_department,
-                        label: '连续学习 ${widget.controller.studyStreak} 天',
-                      ),
-                      _MetricPill(
-                        icon: Icons.upcoming,
-                        label: '明日待复习 ${widget.controller.tomorrowCount}',
-                      ),
-                    ],
+                  Icon(Icons.check_circle_outline, size: 64, color: theme.colorScheme.primary),
+                  const SizedBox(height: 16),
+                  Text('今天的复习已完成', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 8),
+                  Text('可以去选词页添加新单词，或在统计页查看进度', style: theme.textTheme.bodyLarge),
+                  const SizedBox(height: 16),
+                  FilledButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => AddWordsPage(controller: widget.controller, pronunciation: widget.pronunciation),
+                      ));
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('去添加单词'),
                   ),
                 ],
               ),
             ),
-          )
-          else ...[
-            _buildWordCard(theme, currentItem),
-          const SizedBox(height: 16),
-          GestureDetector(
-            onHorizontalDragEnd: (details) {
-              if (_submitting) return;
-              final velocity = details.primaryVelocity ?? 0;
-              if (velocity < -500) {
-                _submit(RecallRating.forgot);
-              } else if (velocity > 500) {
-                _submit(RecallRating.know);
-              }
-            },
-            child: _SectionCard(
-              child: Padding(
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '这次感觉如何？',
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          '← 忘记 | 认识 →',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: [
-                        _AnswerButton(
-                          title: '不认识',
-                          subtitle: '10 分钟后再见',
-                          color: const Color(0xFFBC4D39),
-                          icon: Icons.refresh,
-                          onPressed: _submitting
-                              ? null
-                              : () => _submit(RecallRating.forgot),
-                        ),
-                        _AnswerButton(
-                          title: '有点模糊',
-                          subtitle: '明天继续巩固',
-                          color: const Color(0xFFCC8A2D),
-                          icon: Icons.hourglass_bottom,
-                          onPressed: _submitting
-                              ? null
-                              : () => _submit(RecallRating.hesitant),
-                        ),
-                        _AnswerButton(
-                          title: '认识',
-                          subtitle: '拉长复习间隔',
-                          color: const Color(0xFF1F7A65),
-                          icon: Icons.check_circle,
-                          onPressed: _submitting
-                              ? null
-                              : () => _submit(RecallRating.know),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ),
         ],
-      ],
-    );
-  }
-}
-
-enum _WordbookFilter { all, newWord, learning, mastered, bookmarked }
-
-class WordbookTab extends StatefulWidget {
-  const WordbookTab({
-    super.key,
-    required this.controller,
-    required this.pronunciation,
-  });
-
-  final StudyController controller;
-  final PronunciationService pronunciation;
-
-  @override
-  State<WordbookTab> createState() => _WordbookTabState();
-}
-
-class _WordbookTabState extends State<WordbookTab> {
-  final TextEditingController _searchController = TextEditingController();
-  _WordbookFilter _filter = _WordbookFilter.all;
-  String _query = '';
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  void _showAddWordDialog() {
-    final wordController = TextEditingController();
-    final meaningController = TextEditingController();
-    final phoneticController = TextEditingController();
-    final formKey = GlobalKey<FormState>();
-
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('添加新单词'),
-          content: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: wordController,
-                  decoration: const InputDecoration(
-                    labelText: '英文单词 *',
-                    hintText: '例: hello',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return '请输入英文单词';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: meaningController,
-                  decoration: const InputDecoration(
-                    labelText: '中文释义 *',
-                    hintText: '例: 你好',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return '请输入中文释义';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: phoneticController,
-                  decoration: const InputDecoration(
-                    labelText: '音标 (可选)',
-                    hintText: '例: həˈloʊ',
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('取消'),
-            ),
-            FilledButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  widget.controller.addWord(
-                    word: wordController.text,
-                    meaning: meaningController.text,
-                    phonetic: phoneticController.text,
-                  );
-                  Navigator.of(dialogContext).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('已添加: ${wordController.text}'),
-                    ),
-                  );
-                }
-              },
-              child: const Text('添加'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final items =
-        widget.controller.words
-            .where(_matchesQuery)
-            .where(_matchesFilter)
-            .toList()
-          ..sort(
-            (left, right) => _rankWord(
-              widget.controller.progressFor(right.id),
-            ).compareTo(_rankWord(widget.controller.progressFor(left.id))),
-          );
-
-    return Stack(
-      children: [
-        ListView(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-          children: [
-            _SectionCard(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    _MetricPill(
-                      icon: Icons.stars_outlined,
-                      label:
-                          '已接触 ${widget.controller.seenWordsCount}/${widget.controller.words.length}',
-                    ),
-                    _MetricPill(
-                      icon: Icons.school_outlined,
-                      label: '学习中 ${widget.controller.learningCount}',
-                    ),
-                    _MetricPill(
-                      icon: Icons.workspace_premium_outlined,
-                      label: '已掌握 ${widget.controller.masteredCount}',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            _SectionCard(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextField(
-                      controller: _searchController,
-                      onChanged: (value) {
-                        setState(() {
-                      _query = value.trim().toLowerCase();
-                    });
-                  },
-                  decoration: InputDecoration(
-                    hintText: '搜索单词、中文释义、标签',
-                    prefixIcon: const Icon(Icons.search),
-                    suffixIcon: _query.isEmpty
-                        ? null
-                        : IconButton(
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() {
-                                _query = '';
-                              });
-                            },
-                            icon: const Icon(Icons.close),
-                          ),
-                    filled: true,
-                    fillColor: const Color(0xFFF6F1E9),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(18),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: _WordbookFilter.values
-                      .map(
-                        (filter) => FilterChip(
-                          label: Text(_filterLabel(filter)),
-                          selected: _filter == filter,
-                          onSelected: (_) {
-                            setState(() {
-                              _filter = filter;
-                            });
-                          },
-                        ),
-                      )
-                      .toList(),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  '匹配到 ${items.length} 个词',
-                  style: theme.textTheme.bodyMedium,
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          '词书总览',
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          '现在可以按英文、中文释义或标签搜索，词量扩起来以后会非常顺手。',
-          style: theme.textTheme.bodyLarge,
-        ),
-        const SizedBox(height: 16),
-        if (items.isEmpty)
-          _SectionCard(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Text(
-                '没有匹配到结果，可以试试换个关键词或筛选条件。',
-                style: theme.textTheme.bodyLarge,
-              ),
-            ),
-          ),
-        ...items.map((word) {
-          final progress = widget.controller.progressFor(word.id);
-          final isBookmarked = widget.controller.isBookmarked(word.id);
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => WordDetailPage(
-                      word: word,
-                      controller: widget.controller,
-                      pronunciation: widget.pronunciation,
-                    ),
-                  ),
-                );
-              },
-              child: _SectionCard(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 18,
-                    vertical: 14,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: const Color(0xFFE7F0EE),
-                            child: Text(
-                              word.word.substring(0, 1).toUpperCase(),
-                              style: TextStyle(
-                                color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  word.word,
-                                  style: theme.textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                word.phonetic,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.primary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        _BookmarkButton(
-                          isBookmarked: isBookmarked,
-                          onTap: () => widget.controller.toggleBookmark(word.id),
-                        ),
-                        const SizedBox(width: 8),
-                        _PronunciationButton(
-                          pronunciation: widget.pronunciation,
-                          word: word.word,
-                          size: 44,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      '${word.meaning}\n${_exampleSummary(word)}\n${_progressLine(progress)}',
-                      style: theme.textTheme.bodyMedium?.copyWith(height: 1.45),
-                    ),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: word.tags
-                          .map(
-                            (tag) => Chip(
-                              label: Text(tag),
-                              backgroundColor: const Color(0xFFF2ECE3),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                    const SizedBox(height: 12),
-                    _StatusChip(progress: progress),
-                  ],
-                ),
-              ),
-              ),
-            ),
-          );
-        }),
-      ],
-    ),
-      Positioned(
-        right: 16,
-        bottom: 16,
-        child: FloatingActionButton(
-          onPressed: _showAddWordDialog,
-          child: const Icon(Icons.add),
-        ),
-      ),
-      ],
-    );
-  }
-
-  bool _matchesFilter(VocabWord word) {
-    final progress = widget.controller.progressFor(word.id);
-    switch (_filter) {
-      case _WordbookFilter.all:
-        return true;
-      case _WordbookFilter.newWord:
-        return progress == null;
-      case _WordbookFilter.learning:
-        return progress?.isLearning ?? false;
-      case _WordbookFilter.mastered:
-        return progress?.isMastered ?? false;
-      case _WordbookFilter.bookmarked:
-        return widget.controller.isBookmarked(word.id);
-    }
-  }
-
-  bool _matchesQuery(VocabWord word) {
-    if (_query.isEmpty) {
-      return true;
-    }
-
-    final haystack = [
-      word.word,
-      word.meaning,
-      word.definition,
-      word.level,
-      ...word.tags,
-      ...word.examples.map((item) => item.en),
-      ...word.examples.map((item) => item.zh),
-    ].join(' ').toLowerCase();
-
-    return haystack.contains(_query);
-  }
-}
-
-class BookmarksTab extends StatelessWidget {
-  const BookmarksTab({
-    super.key,
-    required this.controller,
-    required this.pronunciation,
-  });
-
-  final StudyController controller;
-  final PronunciationService pronunciation;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final bookmarkedWords = controller.words
-        .where((w) => controller.isBookmarked(w.id))
-        .toList();
-
-    if (bookmarkedWords.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.bookmark_outline, size: 64, color: theme.colorScheme.onSurfaceVariant),
-            const SizedBox(height: 16),
-            Text(
-              '还没有收藏任何单词',
-              style: theme.textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '在词书页或复习页点击书签图标即可收藏',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
       );
     }
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
       children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: Text(
-            '我的收藏 (${bookmarkedWords.length})',
-            style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
-          ),
-        ),
-        ...bookmarkedWords.map((word) {
-          final progress = controller.progressFor(word.id);
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => WordDetailPage(
-                      word: word,
-                      controller: controller,
-                      pronunciation: pronunciation,
+        _HeroCard(controller: widget.controller),
+        const SizedBox(height: 24),
+        // Word card
+        _Card(
+          child: Padding(
+            padding: const EdgeInsets.all(28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Word
+                  Text(
+                    item.word.word,
+                    style: theme.textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w800, letterSpacing: 1.5, fontSize: 40),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                const SizedBox(height: 8),
+                // Phonetic + speaker
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      item.word.phonetic,
+                      style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.primary),
+                    ),
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: () => widget.pronunciation.speak(item.word.word),
+                      child: Icon(Icons.volume_up, color: theme.colorScheme.primary, size: 28),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                // Divider
+                const Divider(),
+                const SizedBox(height: 16),
+                // Status text or meaning area
+                GestureDetector(
+                  onTap: () => setState(() {
+                    _showMeaning = !_showMeaning;
+                    if (_showMeaning) _statusText = item.word.meaning;
+                  }),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: _showMeaning
+                          ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
+                          : theme.colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      children: [
+                        if (_showMeaning) ...[
+                          Text(
+                            item.word.meaning,
+                            style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                            textAlign: TextAlign.center,
+                          ),
+                          if (item.word.definition.isNotEmpty) ...[
+                            const SizedBox(height: 12),
+                            Text(
+                              item.word.definition,
+                              style: theme.textTheme.bodyMedium,
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                          // Examples
+                          if (item.word.examples.isNotEmpty) ...[
+                            const SizedBox(height: 16),
+                            const Divider(),
+                            const SizedBox(height: 8),
+                            ...item.word.examples.take(2).map((ex) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Text(
+                                '"${ex.en}"',
+                                style: theme.textTheme.bodyMedium?.copyWith(fontStyle: FontStyle.italic),
+                                textAlign: TextAlign.center,
+                              ),
+                            )),
+                          ],
+                          // Tags
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            alignment: WrapAlignment.center,
+                            children: item.word.tags.map((t) => Chip(label: Text(t), materialTapTargetSize: MaterialTapTargetSize.shrinkWrap)).toList(),
+                          ),
+                          const SizedBox(height: 12),
+                          // Dictionary lookup
+                          TextButton.icon(
+                            onPressed: () => widget.openDictionary(item.word.word),
+                            icon: const Icon(Icons.language, size: 16),
+                            label: const Text('剑桥词典'),
+                          ),
+                        ] else
+                          Text(
+                            _statusText,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
-                );
-              },
-              child: _SectionCard(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: const Color(0xFFFFF3E0),
-                            child: Text(
-                              word.word.substring(0, 1).toUpperCase(),
-                              style: TextStyle(
-                                color: const Color(0xFFCC8A2D),
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  word.word,
-                                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-                                ),
-                                Text(
-                                  word.meaning,
-                                  style: theme.textTheme.bodyMedium,
-                                ),
-                              ],
-                            ),
-                          ),
-                          _BookmarkButton(
-                            isBookmarked: true,
-                            onTap: () => controller.toggleBookmark(word.id),
-                          ),
-                          const SizedBox(width: 8),
-                          _StatusChip(progress: progress),
-                        ],
-                      ),
-                    ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        // Answer buttons
+        _Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _AnswerBtn(
+                    label: '不认识',
+                    sub: '稍后再来',
+                    color: const Color(0xFFBC4D39),
+                    icon: Icons.refresh,
+                    onTap: _submitting ? null : () => _submit(RecallRating.forgot),
                   ),
                 ),
-              ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _AnswerBtn(
+                    label: '有点模糊',
+                    sub: '明天再巩固',
+                    color: const Color(0xFFCC8A2D),
+                    icon: Icons.hourglass_bottom,
+                    onTap: _submitting ? null : () => _submit(RecallRating.hesitant),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _AnswerBtn(
+                    label: '认识',
+                    sub: '过几天再复习',
+                    color: const Color(0xFF1F7A65),
+                    icon: Icons.check_circle,
+                    onTap: _submitting ? null : () => _submit(RecallRating.know),
+                  ),
+                ),
+              ],
             ),
-          );
-        }),
+          ),
+        ),
       ],
     );
   }
 }
 
+// ============================================================
+// 选词页
+// ============================================================
+class _WordSelectTab extends StatefulWidget {
+  const _WordSelectTab({required this.controller, required this.pronunciation});
+  final StudyController controller;
+  final PronunciationService pronunciation;
+
+  @override
+  State<_WordSelectTab> createState() => _WordSelectTabState();
+}
+
+class _WordSelectTabState extends State<_WordSelectTab> {
+  final _searchCtl = TextEditingController();
+  String _query = '';
+  final Set<String> _selected = {};
+  int _filterMode = 0; // 0=全部 1=未选 2=已选
+
+  @override
+  void dispose() {
+    _searchCtl.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String v) {
+    setState(() => _query = v.trim().toLowerCase());
+  }
+
+  void _toggleSelect(String id) {
+    setState(() {
+      if (_selected.contains(id)) { _selected.remove(id); } else { _selected.add(id); }
+    });
+  }
+
+  void _addSelected() {
+    final toAdd = _selected.where((id) => !widget.controller.studyWordIds.contains(id)).toList();
+    if (toAdd.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('所选单词已全部添加')));
+      return;
+    }
+    widget.controller.addWordsToStudy(toAdd);
+    setState(() => _selected.clear());
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('已添加 ${toAdd.length} 个单词')));
+  }
+
+  void _addAllVisible() {
+    final all = widget.controller.words;
+    final toAdd = all.where((w) => !widget.controller.studyWordIds.contains(w.id)).map((w) => w.id).toList();
+    if (toAdd.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('全部单词已添加')));
+      return;
+    }
+    widget.controller.addWordsToStudy(toAdd);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('已添加全部 ${toAdd.length} 个单词')));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final allWords = widget.controller.words;
+    final studyIds = widget.controller.studyWordIds;
+
+    final filtered = allWords.where((w) {
+      final added = studyIds.contains(w.id);
+      if (_filterMode == 1 && added) return false; // 未选：排除已添加
+      if (_filterMode == 2 && !added) return false; // 已选：只要已添加
+      if (_query.isEmpty) return true;
+      final h = '${w.word} ${w.meaning} ${w.phonetic} ${w.level}'.toLowerCase();
+      return h.contains(_query);
+    }).toList()..sort((a, b) {
+      final aIn = studyIds.contains(a.id) ? 1 : 0;
+      final bIn = studyIds.contains(b.id) ? 1 : 0;
+      return aIn.compareTo(bIn);
+    });
+
+    final notAdded = filtered.where((w) => !studyIds.contains(w.id)).toList();
+
+    return Stack(
+      children: [
+        Column(
+          children: [
+            // Filter tabs
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+              child: Row(
+                children: [
+                  _FilterTab(label: '未选', count: allWords.where((w) => !studyIds.contains(w.id)).length, active: _filterMode == 1, onTap: () => setState(() => _filterMode = _filterMode == 1 ? 0 : 1)),
+                  const SizedBox(width: 8),
+                  _FilterTab(label: '已选', count: studyIds.length, active: _filterMode == 2, onTap: () => setState(() => _filterMode = _filterMode == 2 ? 0 : 2)),
+                  const SizedBox(width: 8),
+                  _FilterTab(label: '全部', count: allWords.length, active: _filterMode == 0, onTap: () => setState(() => _filterMode = 0)),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _searchCtl,
+                      onChanged: (v) => setState(() => _query = v.trim().toLowerCase()),
+                      decoration: InputDecoration(
+                        hintText: '搜索英文或中文...',
+                        prefixIcon: const Icon(Icons.search),
+                        suffixIcon: _query.isNotEmpty
+                            ? IconButton(icon: const Icon(Icons.clear), onPressed: () { _searchCtl.clear(); setState(() => _query = ''); })
+                            : null,
+                        filled: true,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                      ),
+                    ),
+                  ),
+                  if (_query.isEmpty) ...[
+                    const SizedBox(width: 8),
+                    TextButton.icon(
+                      onPressed: _addAllVisible,
+                      icon: const Icon(Icons.add_circle, size: 18),
+                      label: Text('全部(${notAdded.length})', style: const TextStyle(fontSize: 12)),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Row(
+                children: [
+                  Text('共 ${allWords.length} 词', style: theme.textTheme.bodySmall),
+                  const Spacer(),
+                  Text('待背 ${studyIds.length} 词', style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.primary, fontWeight: FontWeight.w600)),
+                  if (_selected.isNotEmpty) ...[
+                    const SizedBox(width: 8),
+                    Text('已选 ${_selected.length}', style: theme.textTheme.bodySmall?.copyWith(color: Colors.orange, fontWeight: FontWeight.w600)),
+                  ],
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.fromLTRB(12, 0, 12, _selected.isNotEmpty ? 80 : 16),
+                itemCount: filtered.length,
+                itemBuilder: (context, i) {
+                  final w = filtered[i];
+                  final added = studyIds.contains(w.id);
+                  final sel = _selected.contains(w.id);
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: _Card(
+                      child: InkWell(
+                        onTap: () => _toggleSelect(w.id),
+                        borderRadius: BorderRadius.circular(20),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                          child: Row(
+                            children: [
+                              // Checkbox circle
+                              if (added)
+                                const Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Icon(Icons.check_circle, color: Color(0xFF1F7A65), size: 28),
+                                )
+                              else
+                                Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    width: 28, height: 28,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: sel ? theme.colorScheme.primary : Colors.transparent,
+                                      border: Border.all(
+                                        color: sel ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: sel ? const Icon(Icons.check, color: Colors.white, size: 18) : null,
+                                  ),
+                                ),
+                              const SizedBox(width: 4),
+                              // Word info
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (_) => WordDetailPage(word: w, controller: widget.controller, pronunciation: widget.pronunciation),
+                                    ));
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(w.word, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
+                                      Text('${w.phonetic}  ${w.meaning}',
+                                        style: theme.textTheme.bodySmall,
+                                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              // Speaker
+                              IconButton(
+                                icon: const Icon(Icons.volume_up, size: 20),
+                                onPressed: () => widget.pronunciation.speak(w.word),
+                                visualDensity: VisualDensity.compact,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+        // Bottom bar for batch add
+        if (_selected.isNotEmpty)
+          Positioned(
+            bottom: 0, left: 0, right: 0,
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, -2))],
+              ),
+              child: Row(
+                children: [
+                  TextButton(
+                    onPressed: () => setState(() => _selected.clear()),
+                    child: const Text('取消'),
+                  ),
+                  const Spacer(),
+                  Text('已选 ${_selected.length} 个', style: theme.textTheme.bodyMedium),
+                  const Spacer(),
+                  FilledButton.icon(
+                    onPressed: _addSelected,
+                    icon: const Icon(Icons.add),
+                    label: const Text('添加'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+// ============================================================
+// 统计页 (保持原有)
+// ============================================================
 class StatsTab extends StatelessWidget {
   const StatsTab({super.key, required this.controller});
-
   final StudyController controller;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final recentStats = controller.recentStats;
-    final peak = math.max<int>(
-      1,
-      recentStats.map((item) => item.reviewed).fold(0, math.max),
-    );
+    final peak = math.max<int>(1, recentStats.map((i) => i.reviewed).fold(0, math.max));
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
       children: [
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: [
-            _StatCard(
-              title: '今日复习',
-              value: '${controller.reviewedToday}',
-              caption: '新词 ${controller.newTodayCount}',
-              accent: const Color(0xFF1F7A65),
-            ),
-            _StatCard(
-              title: '今日保留率',
-              value: '${(controller.retentionRateToday * 100).round()}%',
-              caption: '忘记 ${controller.todayStats.forgotten}',
-              accent: const Color(0xFFCC6B3D),
-            ),
-            _StatCard(
-              title: '学习连击',
-              value: '${controller.studyStreak}',
-              caption: '连续天数',
-              accent: const Color(0xFF4E7C90),
-            ),
-            _StatCard(
-              title: '掌握单词',
-              value: '${controller.masteredCount}',
-              caption: '总接触 ${controller.seenWordsCount}',
-              accent: const Color(0xFF7B694D),
-            ),
-          ],
-        ),
+        Wrap(spacing: 12, runSpacing: 12, children: [
+          _StatCard(title: '今日复习', value: '${controller.reviewedToday}', caption: '新词 ${controller.newTodayCount}', accent: const Color(0xFF1F7A65)),
+          _StatCard(title: '保留率', value: '${(controller.retentionRateToday * 100).round()}%', caption: '忘记 ${controller.todayStats.forgotten}', accent: const Color(0xFFCC6B3D)),
+          _StatCard(title: '连击', value: '${controller.studyStreak} 天', caption: '连续学习天数', accent: const Color(0xFF4E7C90)),
+          _StatCard(title: '已掌握', value: '${controller.masteredCount}', caption: '总接触 ${controller.seenWordsCount}', accent: const Color(0xFF7B694D)),
+        ]),
         const SizedBox(height: 18),
-        _SectionCard(
+        _Card(
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '最近 7 天节奏',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                Text('最近 7 天', style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 16),
                 SizedBox(
-                  height: 180,
+                  height: 160,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    children: recentStats
-                        .map(
-                          (item) => Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                              ),
-                              child: _DayBar(
-                                label: _compactDate(item.dayKey),
-                                value: item.reviewed,
-                                maxValue: peak,
-                                caption:
-                                    '${(item.retentionRate * 100).round()}%',
-                              ),
+                    children: recentStats.map((i) => Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                          Text('${i.reviewed}', style: theme.textTheme.labelLarge),
+                          const SizedBox(height: 6),
+                          Expanded(child: Align(alignment: Alignment.bottomCenter, child: FractionallySizedBox(
+                            heightFactor: i.reviewed == 0 ? 0.08 : math.max(0.08, i.reviewed / peak),
+                            child: Container(
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), gradient: const LinearGradient(colors: [Color(0xFF1F7A65), Color(0xFFCC8A2D)], begin: Alignment.bottomCenter, end: Alignment.topCenter)),
                             ),
-                          ),
-                        )
-                        .toList(),
+                          ))),
+                          const SizedBox(height: 6),
+                          Text('${DateTime.parse(i.dayKey).month}/${DateTime.parse(i.dayKey).day}', style: theme.textTheme.labelSmall),
+                          Text('${(i.retentionRate * 100).round()}%', style: theme.textTheme.labelSmall),
+                        ]),
+                      ),
+                    )).toList(),
                   ),
                 ),
               ],
@@ -1127,361 +720,66 @@ class StatsTab extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 18),
-        _SectionCard(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '接下来',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _InsightRow(
-                  icon: Icons.today_outlined,
-                  title: '当前待复习',
-                  value: '${controller.dueCount}',
-                ),
-                _InsightRow(
-                  icon: Icons.sunny_snowing,
-                  title: '明日待复习',
-                  value: '${controller.tomorrowCount}',
-                ),
-                _InsightRow(
-                  icon: Icons.calendar_month_outlined,
-                  title: '未来排队',
-                  value: '${controller.futureReviewCount}',
-                ),
-                _InsightRow(
-                  icon: Icons.fiber_new_outlined,
-                  title: '未引入新词',
-                  value: '${controller.backlogCount}',
-                ),
-              ],
-            ),
-          ),
-        ),
+        _Card(child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('接下来', style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 12),
+          _InsightRow(icon: Icons.today_outlined, title: '当前待复习', value: '${controller.dueCount}'),
+          _InsightRow(icon: Icons.sunny_snowing, title: '明日待复习', value: '${controller.tomorrowCount}'),
+          _InsightRow(icon: Icons.calendar_month_outlined, title: '未来排队', value: '${controller.futureReviewCount}'),
+          _InsightRow(icon: Icons.fiber_new_outlined, title: '未引入新词', value: '${controller.backlogCount}'),
+        ]))),
       ],
     );
   }
 }
 
-class SpellingTestTab extends StatefulWidget {
-  const SpellingTestTab({
-    super.key,
-    required this.controller,
-    required this.pronunciation,
-  });
-
+// ============================================================
+// 我的页
+// ============================================================
+class _MeTab extends StatefulWidget {
+  const _MeTab({required this.controller, required this.pronunciation});
   final StudyController controller;
   final PronunciationService pronunciation;
 
   @override
-  State<SpellingTestTab> createState() => _SpellingTestTabState();
+  State<_MeTab> createState() => _MeTabState();
 }
 
-class _SpellingTestTabState extends State<SpellingTestTab> {
-  final TextEditingController _inputController = TextEditingController();
-  VocabWord? _currentWord;
-  bool _showResult = false;
-  bool _isCorrect = false;
-  int _correctCount = 0;
-  int _totalCount = 0;
+class _MeTabState extends State<_MeTab> {
+  final _limitCtl = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _nextWord();
+    _limitCtl.text = '${widget.controller.dailyNewLimit}';
   }
 
   @override
   void dispose() {
-    _inputController.dispose();
+    _limitCtl.dispose();
     super.dispose();
   }
 
-  void _nextWord() {
-    final words = widget.controller.words;
-    if (words.isEmpty) return;
-
-    final random = math.Random();
-    setState(() {
-      _currentWord = words[random.nextInt(words.length)];
-      _showResult = false;
-      _isCorrect = false;
-      _inputController.clear();
-    });
-
-    if (widget.controller.autoPronounce) {
-      widget.pronunciation.speak(_currentWord!.word);
-    }
-  }
-
-  void _checkSpelling() {
-    if (_currentWord == null) return;
-
-    final input = _inputController.text.trim().toLowerCase();
-    final correct = _currentWord!.word.toLowerCase();
-
-    setState(() {
-      _showResult = true;
-      _isCorrect = input == correct;
-      _totalCount++;
-      if (_isCorrect) _correctCount++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    if (_currentWord == null) {
-      return const Center(child: Text('词库为空'));
-    }
-
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-      children: [
-        _SectionCard(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '拼写测试',
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '根据中文释义和发音，拼写出正确的英文单词。',
-                  style: theme.textTheme.bodyLarge,
-                ),
-                const SizedBox(height: 16),
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    _MetricPill(
-                      icon: Icons.check_circle_outline,
-                      label: '正确 $_correctCount',
-                    ),
-                    _MetricPill(
-                      icon: Icons.format_list_numbered,
-                      label: '共 $_totalCount',
-                    ),
-                    if (_totalCount > 0)
-                      _MetricPill(
-                        icon: Icons.percent,
-                        label: '${(_correctCount / _totalCount * 100).round()}%',
-                      ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        _SectionCard(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _currentWord!.meaning,
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _currentWord!.phonetic,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: theme.colorScheme.primary,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    _PronunciationButton(
-                      pronunciation: widget.pronunciation,
-                      word: _currentWord!.word,
-                      size: 44,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        '点击喇叭听发音',
-                        style: theme.textTheme.bodyMedium,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                TextField(
-                  controller: _inputController,
-                  decoration: InputDecoration(
-                    hintText: '输入英文单词',
-                    filled: true,
-                    fillColor: theme.colorScheme.surfaceContainerHighest,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(18),
-                      borderSide: BorderSide.none,
-                    ),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () => _inputController.clear(),
-                    ),
-                  ),
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (_) => _checkSpelling(),
-                ),
-                const SizedBox(height: 16),
-                if (_showResult) ...[
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: _isCorrect
-                          ? Colors.green.withValues(alpha: 0.1)
-                          : Colors.red.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: _isCorrect ? Colors.green : Colors.red,
-                        width: 2,
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _isCorrect ? '正确!' : '错误',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: _isCorrect ? Colors.green : Colors.red,
-                          ),
-                        ),
-                        if (!_isCorrect) ...[
-                          const SizedBox(height: 8),
-                          Text(
-                            '正确答案: ${_currentWord!.word}',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                ],
-                Row(
-                  children: [
-                    Expanded(
-                      child: FilledButton.icon(
-                        onPressed: _showResult ? _nextWord : _checkSpelling,
-                        icon: Icon(_showResult ? Icons.arrow_forward : Icons.check),
-                        label: Text(_showResult ? '下一个' : '检查'),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        if (_currentWord!.examples.isNotEmpty) ...[
-          const SizedBox(height: 16),
-          _SectionCard(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: _ExamplesPanel(examples: _currentWord!.examples),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-}
-
-class SettingsTab extends StatefulWidget {
-  const SettingsTab({super.key, required this.controller});
-
-  final StudyController controller;
-
-  @override
-  State<SettingsTab> createState() => _SettingsTabState();
-}
-
-class _SettingsTabState extends State<SettingsTab> {
-  String? _customDictPath;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCustomDictPath();
-  }
-
-  Future<void> _loadCustomDictPath() async {
-    final path = await widget.controller.getCustomDictPath();
-    setState(() {
-      _customDictPath = path;
-    });
-  }
-
   Future<void> _changeBooks() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('更换词书'),
-        content: const Text('更换词书会回到词书选择页面，不会丢失学习记录。是否继续？'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('确认')),
-        ],
-      ),
-    );
-    if (confirmed == true) {
+    final ok = await showDialog<bool>(context: context, builder: (ctx) => AlertDialog(
+      title: const Text('更换词书'), content: const Text('不会丢失学习记录，继续？'),
+      actions: [TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')), FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('确认'))],
+    ));
+    if (ok == true) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('word_journey.onboarded', false);
       if (mounted) {
+        // Restart to show onboarding
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) {
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              theme: ThemeData(useMaterial3: true, colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1B6B62))),
-              home: Scaffold(
-                body: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const CircularProgressIndicator(),
-                      const SizedBox(height: 16),
-                      const Text('正在返回词书选择...'),
-                      const SizedBox(height: 8),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (_) => OnboardingPage(
-                              onComplete: () {},
-                            )),
-                            (route) => false,
-                          );
-                        },
-                        child: const Text('点击重新选择'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }),
+          MaterialPageRoute(builder: (_) => OnboardingPage(
+            onComplete: () {
+              // Re-trigger app root rebuild
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const WordJourneyHome()),
+                (route) => false,
+              );
+            },
+          )),
           (route) => false,
         );
       }
@@ -1489,459 +787,299 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   Future<void> _exportData() async {
-    final json = await widget.controller.exportData();
-    // Save to file
-    final directory = await FilePicker.platform.getDirectoryPath(
-      dialogTitle: '选择备份保存位置',
-    );
-    if (directory == null) return;
-    final file = File('$directory/word_journey_backup.json');
-    await file.writeAsString(json);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('备份已保存到 $directory')),
-      );
+    try {
+      final dir = await FilePicker.platform.getDirectoryPath(dialogTitle: '选择保存位置');
+      if (dir == null) return;
+      final json = await widget.controller.exportData();
+      await File('$dir/word_journey_backup.json').writeAsString(json);
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('已保存到 $dir')));
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('导出失败: $e')));
     }
   }
 
   Future<void> _importData() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
-      dialogTitle: '选择备份文件',
-    );
-    if (result == null || result.files.isEmpty) return;
-    final file = File(result.files.first.path!);
-    final json = await file.readAsString();
-    await widget.controller.importData(json);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('备份恢复成功！请重启应用。')),
-      );
-    }
-  }
-
-  Future<void> _importDictionary() async {
     try {
-      final path = await widget.controller.pickAndImportDictionary();
-      if (path != null) {
-        setState(() => _customDictPath = path);
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('词库导入成功！重启应用后生效。')),
-          );
-        }
-      }
+      final result = await FilePicker.platform.pickFiles(type: FileType.any, dialogTitle: '选择备份文件');
+      if (result == null || result.files.isEmpty) return;
+      final p = result.files.first.path;
+      if (p == null) return;
+      final json = await File(p).readAsString();
+      await widget.controller.importData(json);
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('恢复成功，请重启')));
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('导入失败: $e')),
-        );
-      }
-    }
-  }
-
-  Future<void> _resetToDefault() async {
-    await widget.controller.resetToDefaultDictionary();
-    setState(() => _customDictPath = null);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('已恢复默认词库，重启应用后生效。')),
-      );
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('恢复失败: $e')));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final bookmarkedCount = widget.controller.words.where((w) => widget.controller.isBookmarked(w.id)).length;
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
       children: [
-        _SectionCard(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '每日新词上限',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  '控制每天第一次出现的新词数量，避免一开始冲太猛导致第二天复习雪崩。',
-                  style: theme.textTheme.bodyLarge,
-                ),
-                const SizedBox(height: 18),
-                Text(
-                  '${widget.controller.dailyNewLimit} 个',
-                  style: theme.textTheme.displaySmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: theme.colorScheme.primary,
-                  ),
-                ),
-                Slider(
-                  value: widget.controller.dailyNewLimit.toDouble(),
-                  min: 5,
-                  max: 30,
-                  divisions: 25,
-                  label: '${widget.controller.dailyNewLimit}',
-                  onChanged: (value) {
-                    widget.controller.setDailyNewLimit(value.round());
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 18),
-        _SectionCard(
-          child: SwitchListTile(
-            value: widget.controller.autoPronounce,
-            onChanged: widget.controller.setAutoPronounce,
-            secondary: const Icon(Icons.volume_up_outlined),
-            title: const Text('自动播放发音'),
-            subtitle: const Text('每次切到新的复习单词时，自动播放英文读音。'),
-          ),
-        ),
-        const SizedBox(height: 18),
-        _SectionCard(
+        // Section: 学习
+        _SectionTitle(title: '学习功能'),
+        const SizedBox(height: 8),
+        _Card(
           child: Column(
             children: [
-              ListTile(
-                leading: const Icon(Icons.swap_horiz),
-                title: const Text('更换词书'),
-                subtitle: const Text('重新选择要学习的词库（四级、考研等）'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: _changeBooks,
-              ),
-              const Divider(height: 1),
-              ListTile(
-                leading: const Icon(Icons.upload_file),
-                title: const Text('导出备份'),
-                subtitle: const Text('备份学习记录到本地文件'),
-                onTap: _exportData,
-              ),
-              const Divider(height: 1),
-              ListTile(
-                leading: const Icon(Icons.download),
-                title: const Text('恢复备份'),
-                subtitle: const Text('从备份文件恢复学习记录'),
-                onTap: _importData,
-              ),
+              _MeItem(icon: Icons.bookmark, title: '我的收藏', subtitle: '$bookmarkedCount 个单词', onTap: () {
+                showModalBottomSheet(context: context, builder: (_) => _BookmarkSheet(controller: widget.controller, pronunciation: widget.pronunciation));
+              }),
+              const _Divider(),
+              _MeItem(icon: Icons.hearing, title: '听写模式', subtitle: '听发音拼写单词', onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => DictationPage(controller: widget.controller, pronunciation: widget.pronunciation)));
+              }),
+              const _Divider(),
+              _MeItem(icon: Icons.spellcheck, title: '拼写测试', subtitle: '看中文拼写单词', onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => _SpellingPage(controller: widget.controller, pronunciation: widget.pronunciation)));
+              }),
             ],
           ),
         ),
         const SizedBox(height: 18),
-        _SectionCard(
+        // Section: 设置
+        _SectionTitle(title: '学习设置'),
+        const SizedBox(height: 8),
+        _Card(
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text('每日新词上限', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.book_outlined),
-                    const SizedBox(width: 12),
-                    Text(
-                      '自定义词库',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+                    SizedBox(
+                      width: 80,
+                      child: TextField(
+                        controller: _limitCtl,
+                        keyboardType: TextInputType.number,
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          isDense: true,
+                        ),
+                        onEditingComplete: () {
+                          final n = int.tryParse(_limitCtl.text)?.clamp(1, 999);
+                          if (n != null) {
+                            widget.controller.setDailyNewLimit(n);
+                            _limitCtl.text = '$n';
+                          }
+                        },
                       ),
                     ),
+                    const SizedBox(width: 8),
+                    Text('个/天 (1-999)', style: theme.textTheme.bodySmall),
                   ],
                 ),
-                const SizedBox(height: 12),
-                if (_customDictPath != null) ...[
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '当前使用自定义词库',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          _customDictPath!,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: _importDictionary,
-                          icon: const Icon(Icons.upload_file),
-                          label: const Text('更换词库'),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: _resetToDefault,
-                          icon: const Icon(Icons.restore),
-                          label: const Text('恢复默认'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ] else ...[
-                  Text(
-                    '导入自定义词库（JSON格式），词库需包含 "words" 字段。',
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: _importDictionary,
-                      icon: const Icon(Icons.upload_file),
-                      label: const Text('导入词库'),
-                    ),
-                  ),
-                ],
               ],
             ),
           ),
         ),
-        const SizedBox(height: 18),
-        _SectionCard(
-          child: Column(
-            children: const [
-              ListTile(
-                leading: Icon(Icons.search_outlined),
-                title: Text('词书搜索已加入'),
-                subtitle: Text('现在可以按英文、中文释义、标签和例句内容快速查词。'),
-              ),
-              Divider(height: 1),
-              ListTile(
-                leading: Icon(Icons.record_voice_over_outlined),
-                title: Text('发音功能可调节'),
-                subtitle: Text('手动点击喇叭依旧可用，自动发音可以在这里按习惯开关。'),
-              ),
-              Divider(height: 1),
-              ListTile(
-                leading: Icon(Icons.storage_outlined),
-                title: Text('当前数据存储'),
-                subtitle: Text('学习记录和设置都保存在本地 SharedPreferences 中。'),
-              ),
-            ],
+        const SizedBox(height: 12),
+        _Card(
+          child: SwitchListTile(
+            secondary: const Icon(Icons.volume_up_outlined),
+            title: const Text('自动发音'),
+            subtitle: const Text('切换单词时自动播放读音'),
+            value: widget.controller.autoPronounce,
+            onChanged: widget.controller.setAutoPronounce,
           ),
         ),
         const SizedBox(height: 18),
-        FilledButton.tonalIcon(
-          onPressed: () async {
-            final confirmed = await showDialog<bool>(
-              context: context,
-              builder: (dialogContext) {
-                return AlertDialog(
-                  title: const Text('重置学习记录？'),
-                  content: const Text('会清空当前设备上的复习进度和统计数据，但不会删除词库。'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(dialogContext).pop(false),
-                      child: const Text('取消'),
-                    ),
-                    FilledButton(
-                      onPressed: () => Navigator.of(dialogContext).pop(true),
-                      child: const Text('确认重置'),
-                    ),
-                  ],
-                );
-              },
-            );
-
-            if (confirmed == true) {
-              await widget.controller.resetAllProgress();
-            }
-          },
-          icon: const Icon(Icons.restart_alt),
-          label: const Text('清空本地学习记录'),
+        // Section: 数据管理
+        _SectionTitle(title: '数据管理'),
+        const SizedBox(height: 8),
+        _Card(
+          child: Column(
+            children: [
+              _MeItem(icon: Icons.swap_horiz, title: '更换词书', subtitle: '重新选择要学习的词库', onTap: _changeBooks),
+              const _Divider(),
+              _MeItem(icon: Icons.upload_file, title: '导出备份', subtitle: '保存学习记录到文件', onTap: _exportData),
+              const _Divider(),
+              _MeItem(icon: Icons.download, title: '恢复备份', subtitle: '从备份文件恢复记录', onTap: _importData),
+              const _Divider(),
+              _MeItem(icon: Icons.restart_alt, title: '重置学习记录', subtitle: '清空进度和统计数据', onTap: () async {
+                final ok = await showDialog<bool>(context: context, builder: (ctx) => AlertDialog(
+                  title: const Text('确认重置？'), content: const Text('将清空所有学习记录'),
+                  actions: [TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')), FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('确认'))],
+                ));
+                if (ok == true) await widget.controller.resetAllProgress();
+              }),
+            ],
+          ),
         ),
       ],
     );
   }
 }
 
-class _HeroPanel extends StatelessWidget {
-  const _HeroPanel({required this.controller});
+// ============================================================
+// Shared widgets
+// ============================================================
+class _Card extends StatelessWidget {
+  const _Card({required this.child});
+  final Widget child;
+  @override
+  Widget build(BuildContext context) => Card(elevation: 0, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), child: child);
+}
 
+class _HeroCard extends StatelessWidget {
+  const _HeroCard({required this.controller});
   final StudyController controller;
-
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final dailyProgress = controller.dailyNewLimit > 0
-        ? (controller.newTodayCount / controller.dailyNewLimit).clamp(0.0, 1.0)
-        : 0.0;
-
     return Container(
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF184F4A), Color(0xFF2B776A), Color(0xFF6E9E96)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '先把今天该出现的词，稳稳记住。',
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                    height: 1.2,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              SizedBox(
-                width: 56,
-                height: 56,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    CircularProgressIndicator(
-                      value: dailyProgress,
-                      backgroundColor: Colors.white.withValues(alpha: 0.2),
-                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-                      strokeWidth: 4,
-                    ),
-                    Text(
-                      '${(dailyProgress * 100).round()}%',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(
-            '今日新词进度 ${controller.newTodayCount}/${controller.dailyNewLimit}',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.75),
-            ),
-          ),
-          const SizedBox(height: 18),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: [
-              _MetricPill(
-                icon: Icons.schedule,
-                label: '待复习 ${controller.dueCount}',
-                dark: true,
-              ),
-              _MetricPill(
-                icon: Icons.fiber_new,
-                label: '新词余量 ${controller.remainingNewToday}',
-                dark: true,
-              ),
-              _MetricPill(
-                icon: Icons.local_fire_department,
-                label: '连击 ${controller.studyStreak} 天',
-                dark: true,
-              ),
-            ],
-          ),
-        ],
-      ),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), gradient: const LinearGradient(colors: [Color(0xFF184F4A), Color(0xFF2B776A), Color(0xFF6E9E96)], begin: Alignment.topLeft, end: Alignment.bottomRight)),
+      child: Wrap(spacing: 12, runSpacing: 12, children: [
+        _Pill(icon: Icons.schedule, label: '待复习 ${controller.dueCount}', dark: true),
+        _Pill(icon: Icons.fiber_new, label: '新词余量 ${controller.remainingNewToday}', dark: true),
+        _Pill(icon: Icons.local_fire_department, label: '连击 ${controller.studyStreak} 天', dark: true),
+        _Pill(icon: Icons.checklist, label: '已学 ${controller.seenWordsCount}/${controller.totalWordsInBooks}', dark: true),
+      ]),
     );
   }
 }
 
-class _SectionCard extends StatelessWidget {
-  const _SectionCard({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(child: child);
-  }
-}
-
-class _SectionTint extends StatelessWidget {
-  const _SectionTint({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF4F0E8),
-        borderRadius: BorderRadius.circular(22),
-      ),
-      child: child,
-    );
-  }
-}
-
-class _MetricPill extends StatelessWidget {
-  const _MetricPill({
-    required this.icon,
-    required this.label,
-    this.dark = false,
-  });
-
+class _Pill extends StatelessWidget {
+  const _Pill({required this.icon, required this.label, this.dark = false});
   final IconData icon;
   final String label;
   final bool dark;
-
   @override
   Widget build(BuildContext context) {
-    final foreground = dark
-        ? Colors.white
-        : Theme.of(context).colorScheme.primary;
-    final background = dark
-        ? Colors.white.withValues(alpha: 0.12)
-        : const Color(0xFFE8F1EF);
-
+    final fg = dark ? Colors.white : Theme.of(context).colorScheme.primary;
+    final bg = dark ? Colors.white.withValues(alpha: 0.12) : const Color(0xFFE8F1EF);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(20)),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(icon, size: 16, color: fg), const SizedBox(width: 6), Text(label, style: TextStyle(color: fg, fontWeight: FontWeight.w600, fontSize: 13))]),
+    );
+  }
+}
+
+class _AnswerBtn extends StatelessWidget {
+  const _AnswerBtn({required this.label, required this.sub, required this.color, required this.icon, this.onTap});
+  final String label, sub;
+  final Color color;
+  final IconData icon;
+  final VoidCallback? onTap;
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton(
+      style: FilledButton.styleFrom(backgroundColor: color, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18))),
+      onPressed: onTap,
+      child: Column(children: [
+        Icon(icon, size: 20),
+        const SizedBox(height: 4),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
+        Text(sub, style: const TextStyle(fontSize: 11, color: Colors.white70)),
+      ]),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({required this.title});
+  final String title;
+  @override
+  Widget build(BuildContext context) => Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700));
+}
+
+class _MeItem extends StatelessWidget {
+  const _MeItem({required this.icon, required this.title, required this.subtitle, this.onTap});
+  final IconData icon;
+  final String title, subtitle;
+  final VoidCallback? onTap;
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(leading: Icon(icon), title: Text(title), subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodySmall), trailing: const Icon(Icons.chevron_right), onTap: onTap);
+  }
+}
+
+class _Divider extends StatelessWidget {
+  const _Divider();
+  @override
+  Widget build(BuildContext context) => const Divider(height: 1, indent: 16, endIndent: 16);
+}
+
+class _InsightRow extends StatelessWidget {
+  const _InsightRow({required this.icon, required this.title, required this.value});
+  final IconData icon;
+  final String title, value;
+  @override
+  Widget build(BuildContext context) => ListTile(contentPadding: EdgeInsets.zero, leading: Icon(icon), title: Text(title), trailing: Text(value, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800)));
+}
+
+class _StatCard extends StatelessWidget {
+  const _StatCard({required this.title, required this.value, required this.caption, required this.accent});
+  final String title, value, caption;
+  final Color accent;
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(constraints: const BoxConstraints(minWidth: 160), child: _Card(child: Padding(
+      padding: const EdgeInsets.all(18),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(width: 12, height: 12, decoration: BoxDecoration(color: accent, borderRadius: BorderRadius.circular(6))),
+        const SizedBox(height: 16),
+        Text(title, style: Theme.of(context).textTheme.titleSmall),
+        const SizedBox(height: 6),
+        Text(value, style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800)),
+        const SizedBox(height: 4),
+        Text(caption, style: Theme.of(context).textTheme.bodySmall),
+      ]),
+    )));
+  }
+}
+
+// ============================================================
+// Bookmark bottom sheet
+// ============================================================
+class _BookmarkSheet extends StatelessWidget {
+  const _BookmarkSheet({required this.controller, required this.pronunciation});
+  final StudyController controller;
+  final PronunciationService pronunciation;
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final words = controller.words.where((w) => controller.isBookmarked(w.id)).toList();
+    return DraggableScrollableSheet(
+      initialChildSize: 0.6,
+      maxChildSize: 0.9,
+      minChildSize: 0.3,
+      expand: false,
+      builder: (_, scrollCtl) => Column(
         children: [
-          Icon(icon, size: 18, color: foreground),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: TextStyle(color: foreground, fontWeight: FontWeight.w700),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text('我的收藏 (${words.length})', style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+          ),
+          Expanded(
+            child: words.isEmpty
+                ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.bookmark_outline, size: 48, color: theme.colorScheme.onSurfaceVariant), const SizedBox(height: 8), Text('暂无收藏', style: theme.textTheme.bodyLarge)]))
+                : ListView.builder(
+                    controller: scrollCtl,
+                    itemCount: words.length,
+                    itemBuilder: (_, i) {
+                      final w = words[i];
+                      return ListTile(
+                        leading: CircleAvatar(child: Text(w.word.isNotEmpty ? w.word[0].toUpperCase() : '?')),
+                        title: Text(w.word, style: const TextStyle(fontWeight: FontWeight.w600)),
+                        subtitle: Text(w.meaning, maxLines: 1, overflow: TextOverflow.ellipsis),
+                        trailing: IconButton(icon: Icon(Icons.bookmark, color: theme.colorScheme.primary), onPressed: () => controller.toggleBookmark(w.id)),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (_) => WordDetailPage(word: w, controller: controller, pronunciation: pronunciation)));
+                        },
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -1949,282 +1087,40 @@ class _MetricPill extends StatelessWidget {
   }
 }
 
-class _PlainPill extends StatelessWidget {
-  const _PlainPill({required this.icon, required this.label});
+// ============================================================
+// Spelling test page (moved from tab to "我的")
+// ============================================================
+class _SpellingPage extends StatefulWidget {
+  const _SpellingPage({required this.controller, required this.pronunciation});
+  final StudyController controller;
+  final PronunciationService pronunciation;
+  @override
+  State<_SpellingPage> createState() => _SpellingPageState();
+}
 
-  final IconData icon;
+class _FilterTab extends StatelessWidget {
+  const _FilterTab({required this.label, required this.count, required this.active, required this.onTap});
   final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1ECE3),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [Icon(icon, size: 18), const SizedBox(width: 8), Text(label)],
-      ),
-    );
-  }
-}
-
-class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.progress});
-
-  final WordProgress? progress;
-
-  @override
-  Widget build(BuildContext context) {
-    final status = _statusLabel(progress);
-    final color = _statusColor(progress);
-    return Chip(
-      label: Text(status),
-      avatar: Icon(_statusIcon(progress), size: 18, color: color),
-      side: BorderSide.none,
-      backgroundColor: color.withValues(alpha: 0.14),
-      labelStyle: TextStyle(color: color, fontWeight: FontWeight.w700),
-    );
-  }
-}
-
-class _ExamplesPanel extends StatelessWidget {
-  const _ExamplesPanel({required this.examples});
-
-  final List<WordExample> examples;
-
+  final int count;
+  final bool active;
+  final VoidCallback onTap;
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    if (examples.isEmpty) {
-      return Text(
-        '这个词暂时还没有配套例句。',
-        style: theme.textTheme.bodyLarge?.copyWith(height: 1.55),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '学习例句',
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 10),
-        ...examples.map(
-          (example) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.72),
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    example.en,
-                    style: theme.textTheme.titleMedium?.copyWith(height: 1.5),
-                  ),
-                  if (example.zh.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      example.zh,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        height: 1.5,
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 8),
-                  Text(
-                    '来源：${example.source}',
-                    style: theme.textTheme.labelMedium,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _PronunciationButton extends StatelessWidget {
-  const _PronunciationButton({
-    required this.pronunciation,
-    required this.word,
-    required this.size,
-  });
-
-  final PronunciationService pronunciation;
-  final String word;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: pronunciation,
-      builder: (context, child) {
-        final speaking = pronunciation.isSpeaking(word);
-        return Tooltip(
-          message: speaking ? '停止发音' : '播放发音',
-          child: InkWell(
-            borderRadius: BorderRadius.circular(18),
-            onTap: () => pronunciation.speakOrStop(word),
-            child: Ink(
-              width: size,
-              height: size,
-              decoration: BoxDecoration(
-                color: speaking
-                    ? const Color(0xFF155C55)
-                    : const Color(0xFFE5EFEC),
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: Icon(
-                speaking ? Icons.stop_rounded : Icons.volume_up_rounded,
-                color: speaking ? Colors.white : const Color(0xFF155C55),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _BookmarkButton extends StatelessWidget {
-  const _BookmarkButton({
-    required this.isBookmarked,
-    required this.onTap,
-  });
-
-  final bool isBookmarked;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: isBookmarked ? '取消收藏' : '收藏',
-      child: InkWell(
-        borderRadius: BorderRadius.circular(18),
+    return Expanded(
+      child: GestureDetector(
         onTap: onTap,
-        child: Ink(
-          width: 44,
-          height: 44,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isBookmarked
-                ? const Color(0xFFFFF3E0)
-                : const Color(0xFFE5EFEC),
-            borderRadius: BorderRadius.circular(18),
+            color: active ? theme.colorScheme.primary : theme.colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            isBookmarked ? Icons.bookmark : Icons.bookmark_outline,
-            color: isBookmarked
-                ? const Color(0xFFCC8A2D)
-                : const Color(0xFF155C55),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AnswerButton extends StatelessWidget {
-  const _AnswerButton({
-    required this.title,
-    required this.subtitle,
-    required this.color,
-    required this.icon,
-    required this.onPressed,
-  });
-
-  final String title;
-  final String subtitle;
-  final Color color;
-  final IconData icon;
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 220,
-      child: FilledButton(
-        style: FilledButton.styleFrom(
-          backgroundColor: color,
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(22),
-          ),
-        ),
-        onPressed: onPressed,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-            ),
-            const SizedBox(height: 4),
-            Text(subtitle, style: const TextStyle(color: Colors.white70)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  const _StatCard({
-    required this.title,
-    required this.value,
-    required this.caption,
-    required this.accent,
-  });
-
-  final String title;
-  final String value;
-  final String caption;
-  final Color accent;
-
-  @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 170),
-      child: _SectionCard(
-        child: Padding(
-          padding: const EdgeInsets.all(18),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 14,
-                height: 14,
-                decoration: BoxDecoration(
-                  color: accent,
-                  borderRadius: BorderRadius.circular(999),
-                ),
-              ),
-              const SizedBox(height: 18),
-              Text(title, style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 8),
-              Text(
-                value,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(caption, style: Theme.of(context).textTheme.bodyMedium),
+              Text('$count', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: active ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface)),
+              Text(label, style: TextStyle(fontSize: 12, color: active ? theme.colorScheme.onPrimary : theme.colorScheme.onSurfaceVariant)),
             ],
           ),
         ),
@@ -2233,184 +1129,79 @@ class _StatCard extends StatelessWidget {
   }
 }
 
-class _DayBar extends StatelessWidget {
-  const _DayBar({
-    required this.label,
-    required this.value,
-    required this.maxValue,
-    required this.caption,
-  });
+class _SpellingPageState extends State<_SpellingPage> {
+  final _inputCtl = TextEditingController();
+  late List<VocabWord> _pool;
+  VocabWord? _word;
+  bool _shown = false, _correct = false;
+  int _ok = 0, _total = 0;
 
-  final String label;
-  final int value;
-  final int maxValue;
-  final String caption;
+  @override
+  void initState() {
+    super.initState();
+    _pool = List.from(widget.controller.studyWords)..shuffle();
+    _next();
+  }
+
+  @override
+  void dispose() {
+    _inputCtl.dispose();
+    super.dispose();
+  }
+
+  void _next() {
+    if (_pool.isEmpty) {
+      _pool = List.from(widget.controller.studyWords.isEmpty ? widget.controller.words : widget.controller.studyWords)..shuffle();
+    }
+    if (_pool.isEmpty) return;
+    setState(() {
+      _word = _pool.removeLast();
+      _shown = false;
+      _inputCtl.clear();
+    });
+  }
+
+  void _check() {
+    if (_word == null) return;
+    final ok = _inputCtl.text.trim().toLowerCase() == _word!.word;
+    setState(() { _shown = true; _correct = ok; _total++; if (ok) _ok++; });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final heightFactor = value == 0
-        ? 0.08
-        : (value / maxValue).clamp(0.08, 1.0);
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Text('$value', style: Theme.of(context).textTheme.labelLarge),
-        const SizedBox(height: 8),
-        Expanded(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: FractionallySizedBox(
-              heightFactor: heightFactor,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(18),
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF1F7A65), Color(0xFFCC8A2D)],
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                  ),
-                ),
-              ),
+    final theme = Theme.of(context);
+    if (widget.controller.studyWords.isEmpty && widget.controller.words.isEmpty) {
+      return Scaffold(appBar: AppBar(title: const Text('拼写测试')), body: const Center(child: Text('没有可拼写的单词，请先去选词页添加')));
+    }
+    if (_word == null) return Scaffold(appBar: AppBar(title: const Text('拼写测试')), body: const Center(child: CircularProgressIndicator()));
+    return Scaffold(
+      appBar: AppBar(title: const Text('拼写测试'), actions: [Text('$_ok/$_total'), const SizedBox(width: 16)]),
+      body: ListView(padding: const EdgeInsets.all(20), children: [
+        _Card(child: Padding(padding: const EdgeInsets.all(24), child: Column(children: [
+          Text(_word!.meaning, style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700), textAlign: TextAlign.center),
+          const SizedBox(height: 8),
+          Text(_word!.phonetic, style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.primary)),
+          const SizedBox(height: 12),
+          IconButton.filled(icon: const Icon(Icons.volume_up), onPressed: () => widget.pronunciation.speak(_word!.word)),
+        ]))),
+        const SizedBox(height: 16),
+        _Card(child: Padding(padding: const EdgeInsets.all(20), child: Column(children: [
+          TextField(controller: _inputCtl, decoration: InputDecoration(hintText: '输入英文单词', filled: true, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none)), onSubmitted: (_) => _shown ? _next() : _check(), enabled: !_shown),
+          const SizedBox(height: 16),
+          if (_shown) ...[
+            Container(
+              width: double.infinity, padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: (_correct ? Colors.green : Colors.red).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12), border: Border.all(color: _correct ? Colors.green : Colors.red)),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(_correct ? '正确!' : '错误', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700, color: _correct ? Colors.green : Colors.red)),
+                if (!_correct) Text('正确答案: ${_word!.word}', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
+              ]),
             ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(label, style: Theme.of(context).textTheme.labelMedium),
-        Text(caption, style: Theme.of(context).textTheme.labelSmall),
-      ],
+          ],
+          const SizedBox(height: 12),
+          SizedBox(width: double.infinity, child: FilledButton.icon(onPressed: _shown ? _next : _check, icon: Icon(_shown ? Icons.arrow_forward : Icons.check), label: Text(_shown ? '下一个' : '检查'))),
+        ]))),
+      ]),
     );
   }
-}
-
-class _InsightRow extends StatelessWidget {
-  const _InsightRow({
-    required this.icon,
-    required this.title,
-    required this.value,
-  });
-
-  final IconData icon;
-  final String title;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Icon(icon),
-      title: Text(title),
-      trailing: Text(
-        value,
-        style: Theme.of(
-          context,
-        ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-      ),
-    );
-  }
-}
-
-String _filterLabel(_WordbookFilter filter) {
-  switch (filter) {
-    case _WordbookFilter.all:
-      return '全部';
-    case _WordbookFilter.newWord:
-      return '新词';
-    case _WordbookFilter.learning:
-      return '复习中';
-    case _WordbookFilter.mastered:
-      return '已掌握';
-    case _WordbookFilter.bookmarked:
-      return '已收藏';
-  }
-}
-
-String _statusLabel(WordProgress? progress) {
-  if (progress == null) {
-    return '新词';
-  }
-  if (progress.isMastered) {
-    return '已掌握';
-  }
-  return '复习中';
-}
-
-Color _statusColor(WordProgress? progress) {
-  if (progress == null) {
-    return const Color(0xFFCC8A2D);
-  }
-  if (progress.isMastered) {
-    return const Color(0xFF1F7A65);
-  }
-  return const Color(0xFF4E7C90);
-}
-
-IconData _statusIcon(WordProgress? progress) {
-  if (progress == null) {
-    return Icons.fiber_new;
-  }
-  if (progress.isMastered) {
-    return Icons.workspace_premium;
-  }
-  return Icons.refresh;
-}
-
-int _rankWord(WordProgress? progress) {
-  if (progress == null) {
-    return 0;
-  }
-  if (progress.isMastered) {
-    return 3;
-  }
-  return 2;
-}
-
-String _progressLine(WordProgress? progress) {
-  if (progress == null) {
-    return '尚未开始，等待今日新词配额引入。';
-  }
-  final nextReview = _nextReviewLabel(progress.nextReviewAt);
-  return '已复习 ${progress.totalReviews} 次，下一次 $nextReview。';
-}
-
-String _exampleSummary(VocabWord word) {
-  if (word.examples.isEmpty) {
-    return '暂无例句';
-  }
-  return '例句 ${word.examples.length} 条';
-}
-
-String _timeAgoLabel(DateTime? value) {
-  if (value == null) {
-    return '刚刚加入计划';
-  }
-  final delta = DateTime.now().difference(value);
-  if (delta.inDays >= 1) {
-    return '${delta.inDays} 天前';
-  }
-  if (delta.inHours >= 1) {
-    return '${delta.inHours} 小时前';
-  }
-  if (delta.inMinutes >= 1) {
-    return '${delta.inMinutes} 分钟前';
-  }
-  return '刚刚';
-}
-
-String _nextReviewLabel(DateTime value) {
-  final now = DateTime.now();
-  final today = startOfDay(now);
-  final target = startOfDay(value);
-  final delta = target.difference(today).inDays;
-  if (delta <= 0) {
-    return '今天';
-  }
-  if (delta == 1) {
-    return '明天';
-  }
-  return '$delta 天后';
-}
-
-String _compactDate(String dayKey) {
-  final parsed = DateTime.parse(dayKey);
-  return '${parsed.month}/${parsed.day}';
 }
