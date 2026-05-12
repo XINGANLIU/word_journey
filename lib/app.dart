@@ -44,8 +44,7 @@ class _WordJourneyHomeState extends State<WordJourneyHome> {
   }
 
   void _openDictionary(String word) async {
-    final url = 'https://dictionary.cambridge.org/zhs/%E8%AF%8D%E5%85%B8/%E8%8B%B1%E8%AF%AD-%E6%B1%89%E8%AF%AD-%E7%AE%80%E4%BD%93/$word';
-    final uri = Uri.parse(url);
+    final uri = Uri.parse('https://dictionary.cambridge.org/zhs/%E8%AF%8D%E5%85%B8/%E8%8B%B1%E8%AF%AD-%E6%B1%89%E8%AF%AD-%E7%AE%80%E4%BD%93/${Uri.encodeComponent(word)}');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
@@ -870,6 +869,9 @@ class _MeTabState extends State<_MeTab> {
                           if (n != null) {
                             widget.controller.setDailyNewLimit(n);
                             _limitCtl.text = '$n';
+                          } else {
+                            _limitCtl.text = '${widget.controller.dailyNewLimit}';
+                            if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('请输入1-999的数字')));
                           }
                         },
                       ),
@@ -1048,6 +1050,9 @@ class _BookmarkSheet extends StatelessWidget {
   final PronunciationService pronunciation;
   @override
   Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) {
     final theme = Theme.of(context);
     final words = controller.words.where((w) => controller.isBookmarked(w.id)).toList();
     return DraggableScrollableSheet(
@@ -1083,6 +1088,8 @@ class _BookmarkSheet extends StatelessWidget {
           ),
         ],
       ),
+    );
+      },
     );
   }
 }
@@ -1163,7 +1170,7 @@ class _SpellingPageState extends State<_SpellingPage> {
 
   void _check() {
     if (_word == null) return;
-    final ok = _inputCtl.text.trim().toLowerCase() == _word!.word;
+    final ok = _inputCtl.text.trim().toLowerCase() == _word!.word.toLowerCase();
     setState(() { _shown = true; _correct = ok; _total++; if (ok) _ok++; });
   }
 

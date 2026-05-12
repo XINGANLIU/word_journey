@@ -244,7 +244,7 @@ class _WordListTile extends StatelessWidget {
               ? theme.colorScheme.primaryContainer
               : theme.colorScheme.surfaceContainerHighest,
           child: Text(
-            word.word.substring(0, 1).toUpperCase(),
+            word.word.isNotEmpty ? word.word[0].toUpperCase() : '?',
             style: TextStyle(
               fontWeight: FontWeight.w700,
               color: isAdded

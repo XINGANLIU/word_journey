@@ -126,12 +126,10 @@ class StudyController extends ChangeNotifier {
   int get studyStreak {
     var streak = 0;
     var cursor = startOfDay(DateTime.now());
-    while (true) {
+    for (var i = 0; i < 365; i++) {
       final key = studyDayKey(cursor);
       final stats = _statsByDay[key];
-      if (stats == null || stats.reviewed == 0) {
-        break;
-      }
+      if (stats == null || stats.reviewed == 0) break;
       streak += 1;
       cursor = cursor.subtract(const Duration(days: 1));
     }
@@ -328,20 +326,6 @@ class StudyController extends ChangeNotifier {
     await _preferences?.setString('word_journey.custom_words', jsonEncode(customWords));
   }
 
-  void _loadCustomWords() {
-    final raw = _preferences?.getString('word_journey.custom_words');
-    if (raw == null || raw.isEmpty) return;
-
-    final decoded = jsonDecode(raw) as List<dynamic>;
-    final customWords = decoded
-        .map((item) => VocabWord.fromJson(Map<String, dynamic>.from(item as Map)))
-        .toList();
-
-    final existingIds = _words.map((w) => w.id).toSet();
-    final newWords = customWords.where((w) => !existingIds.contains(w.id)).toList();
-    _words = [..._words, ...newWords];
-  }
-
   Future<String> exportData() async {
     final data = {
       'progress': _progressById.values.map((v) => v.toJson()).toList(),
@@ -382,38 +366,54 @@ class StudyController extends ChangeNotifier {
   Future<void> resetAllProgress() async {
     _progressById.clear();
     _statsByDay.clear();
+    _bookmarks.clear();
+    _studyWordIds.clear();
     await _preferences?.remove(_progressStorageKey);
     await _preferences?.remove(_statsStorageKey);
+    await _preferences?.remove(_bookmarksStorageKey);
+    await _preferences?.remove(_studyWordsStorageKey);
     notifyListeners();
   }
 
   void _loadProgress() {
-    final raw = _preferences?.getString(_progressStorageKey);
-    if (raw == null || raw.isEmpty) {
-      return;
-    }
-
-    final decoded = jsonDecode(raw) as List<dynamic>;
-    for (final item in decoded) {
-      final progress = WordProgress.fromJson(
-        Map<String, dynamic>.from(item as Map),
-      );
-      _progressById[progress.wordId] = progress;
+    try {
+      final raw = _preferences?.getString(_progressStorageKey);
+      if (raw == null || raw.isEmpty) return;
+      final decoded = jsonDecode(raw) as List<dynamic>;
+      for (final item in decoded) {
+        final progress = WordProgress.fromJson(Map<String, dynamic>.from(item as Map));
+        _progressById[progress.wordId] = progress;
+      }
+    } catch (_) {
+      _preferences?.remove(_progressStorageKey);
     }
   }
 
   void _loadStats() {
-    final raw = _preferences?.getString(_statsStorageKey);
-    if (raw == null || raw.isEmpty) {
-      return;
+    try {
+      final raw = _preferences?.getString(_statsStorageKey);
+      if (raw == null || raw.isEmpty) return;
+      final decoded = jsonDecode(raw) as List<dynamic>;
+      for (final item in decoded) {
+        final stats = DailyStudyStats.fromJson(Map<String, dynamic>.from(item as Map));
+        _statsByDay[stats.dayKey] = stats;
+      }
+    } catch (_) {
+      _preferences?.remove(_statsStorageKey);
     }
+  }
 
-    final decoded = jsonDecode(raw) as List<dynamic>;
-    for (final item in decoded) {
-      final stats = DailyStudyStats.fromJson(
-        Map<String, dynamic>.from(item as Map),
-      );
-      _statsByDay[stats.dayKey] = stats;
+  void _loadCustomWords() {
+    try {
+      final raw = _preferences?.getString('word_journey.custom_words');
+      if (raw == null || raw.isEmpty) return;
+      final decoded = jsonDecode(raw) as List<dynamic>;
+      final customWords = decoded.map((item) => VocabWord.fromJson(Map<String, dynamic>.from(item as Map))).toList();
+      final existingIds = _words.map((w) => w.id).toSet();
+      final newWords = customWords.where((w) => !existingIds.contains(w.id)).toList();
+      _words = [..._words, ...newWords];
+    } catch (_) {
+      _preferences?.remove('word_journey.custom_words');
     }
   }
 
@@ -514,7 +514,7 @@ class StudyController extends ChangeNotifier {
         // Ebbinghaus: easy → longer intervals
         // 1d → 3d → 7d → 15d → 30d → 60d
         final bonus = current.easyStreak >= 2 ? 1.5 : 1.0;
-        final newEase = math.min(2.5, current.easeFactor + 0.15);
+         final newEase = math.min(3.0, current.easeFactor + 0.15);
         int nextDays;
         if (current.intervalDays == 0) {
           nextDays = 1;

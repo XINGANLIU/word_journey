@@ -57,7 +57,7 @@ class _DictationPageState extends State<DictationPage> {
     if (_wordPool.isEmpty) {
       _loadWordPool();
     }
-
+    if (_wordPool.isEmpty) return;
     setState(() {
       _currentWord = _wordPool.removeLast();
       _showResult = false;
