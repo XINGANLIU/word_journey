@@ -171,12 +171,22 @@ class _StudyTabState extends State<StudyTab> {
   bool _showMeaning = false;
   bool _submitting = false;
   String _statusText = '请回忆发音和释义';
+  String _lastFeedback = '';
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _maybeAutoPronounce();
+  Future<void> _submit(RecallRating rating) async {
+    final item = widget.controller.currentItem;
+    if (item == null || _submitting) return;
+    HapticFeedback.lightImpact();
+    setState(() { _submitting = true; });
+    await widget.controller.answer(item, rating);
+    if (!mounted) return;
+    setState(() {
+      _submitting = false;
+      _showMeaning = false;
+      _lastFeedback = rating == RecallRating.know ? '✓ 已掌握' : rating == RecallRating.hesitant ? '~ 还需巩固' : '✗ 再练一次';
+    });
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) setState(() => _lastFeedback = '');
     });
   }
 
@@ -198,16 +208,6 @@ class _StudyTabState extends State<StudyTab> {
     final item = widget.controller.currentItem;
     if (!mounted || item == null || !widget.controller.autoPronounce) return;
     widget.pronunciation.speak(item.word.word);
-  }
-
-  Future<void> _submit(RecallRating rating) async {
-    final item = widget.controller.currentItem;
-    if (item == null || _submitting) return;
-    HapticFeedback.lightImpact();
-    setState(() => _submitting = true);
-    await widget.controller.answer(item, rating);
-    if (!mounted) return;
-    setState(() => _submitting = false);
   }
 
   @override
@@ -365,6 +365,13 @@ class _StudyTabState extends State<StudyTab> {
             ),
           ),
         ),
+        if (_lastFeedback.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Text(_lastFeedback, style: theme.textTheme.titleMedium?.copyWith(
+            color: _lastFeedback.startsWith('✓') ? Colors.green : _lastFeedback.startsWith('~') ? Colors.orange : Colors.red,
+            fontWeight: FontWeight.w600,
+          ), textAlign: TextAlign.center),
+        ],
         const SizedBox(height: 20),
         // Answer buttons
         _Card(
@@ -456,14 +463,21 @@ class _WordSelectTabState extends State<_WordSelectTab> {
   }
 
   void _addAllVisible() {
-    final all = widget.controller.words;
-    final toAdd = all.where((w) => !widget.controller.studyWordIds.contains(w.id)).map((w) => w.id).toList();
-    if (toAdd.isEmpty) {
+    // Only add unfiltered + not-yet-added words from all books
+    final all = widget.controller.words.where((w) => !widget.controller.studyWordIds.contains(w.id)).map((w) => w.id).toList();
+    if (all.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('全部单词已添加')));
       return;
     }
-    widget.controller.addWordsToStudy(toAdd);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('已添加全部 ${toAdd.length} 个单词')));
+    widget.controller.addWordsToStudy(all);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('已添加全部 ${all.length} 个单词')));
+  }
+
+  void _setFilter(int mode) {
+    setState(() {
+      _filterMode = mode;
+      _selected.clear(); // clear selections when switching filter
+    });
   }
 
   @override
@@ -496,11 +510,11 @@ class _WordSelectTabState extends State<_WordSelectTab> {
               padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
               child: Row(
                 children: [
-                  _FilterTab(label: '未选', count: allWords.where((w) => !studyIds.contains(w.id)).length, active: _filterMode == 1, onTap: () => setState(() => _filterMode = _filterMode == 1 ? 0 : 1)),
+                  _FilterTab(label: '未选', count: allWords.where((w) => !studyIds.contains(w.id)).length, active: _filterMode == 1, onTap: () => _setFilter(_filterMode == 1 ? 0 : 1)),
                   const SizedBox(width: 8),
-                  _FilterTab(label: '已选', count: studyIds.length, active: _filterMode == 2, onTap: () => setState(() => _filterMode = _filterMode == 2 ? 0 : 2)),
+                  _FilterTab(label: '已选', count: studyIds.length, active: _filterMode == 2, onTap: () => _setFilter(_filterMode == 2 ? 0 : 2)),
                   const SizedBox(width: 8),
-                  _FilterTab(label: '全部', count: allWords.length, active: _filterMode == 0, onTap: () => setState(() => _filterMode = 0)),
+                  _FilterTab(label: '全部', count: allWords.length, active: _filterMode == 0, onTap: () => _setFilter(0)),
                 ],
               ),
             ),
@@ -1067,8 +1081,11 @@ class _BookmarkSheet extends StatelessWidget {
             child: Text('我的收藏 (${words.length})', style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
           ),
           Expanded(
-            child: words.isEmpty
-                ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.bookmark_outline, size: 48, color: theme.colorScheme.onSurfaceVariant), const SizedBox(height: 8), Text('暂无收藏', style: theme.textTheme.bodyLarge)]))
+              child: words.isEmpty
+                  ? GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.bookmark_outline, size: 48, color: theme.colorScheme.onSurfaceVariant), const SizedBox(height: 8), Text('暂无收藏，点击关闭', style: theme.textTheme.bodyLarge)])),
+                    )
                 : ListView.builder(
                     controller: scrollCtl,
                     itemCount: words.length,

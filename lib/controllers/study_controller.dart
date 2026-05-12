@@ -225,10 +225,12 @@ class StudyController extends ChangeNotifier {
     _statsByDay[dayKey] = currentStats.copyWith(
       reviewed: currentStats.reviewed + 1,
       newWords: currentStats.newWords + (wasNewWord ? 1 : 0),
-      forgotten:
-          currentStats.forgotten + (rating == RecallRating.forgot ? 1 : 0),
+      forgotten: currentStats.forgotten + (rating == RecallRating.forgot ? 1 : 0),
       confident: currentStats.confident + (rating == RecallRating.know ? 1 : 0),
     );
+
+    // Prune old stats on every answer (lightweight: only checks entries if > 45 days)
+    _pruneOldStats();
 
     await _persistAll();
     notifyListeners();
@@ -327,12 +329,14 @@ class StudyController extends ChangeNotifier {
   }
 
   Future<String> exportData() async {
+    final prefs = await SharedPreferences.getInstance();
     final data = {
       'progress': _progressById.values.map((v) => v.toJson()).toList(),
       'stats': _statsByDay.values.map((v) => v.toJson()).toList(),
       'bookmarks': _bookmarks.toList(),
       'studyWords': _studyWordIds.toList(),
       'dailyLimit': _dailyNewLimit,
+      'selectedBooks': prefs.getStringList('word_journey.selected_books') ?? [],
     };
     return jsonEncode(data);
   }
@@ -355,6 +359,9 @@ class StudyController extends ChangeNotifier {
     _studyWordIds.addAll(List<String>.from((data['studyWords'] as List<dynamic>?) ?? []));
     if (data['dailyLimit'] != null) {
       _dailyNewLimit = data['dailyLimit'] as int;
+    }
+    if (data['selectedBooks'] != null) {
+      await _preferences?.setStringList('word_journey.selected_books', List<String>.from(data['selectedBooks'] as List));
     }
     await _persistAll();
     await _preferences?.setStringList(_bookmarksStorageKey, _bookmarks.toList());
