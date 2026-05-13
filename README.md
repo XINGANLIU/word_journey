@@ -17,6 +17,10 @@
 
 <p align="center">
   <a href="https://github.com/XINGANLIU/word_journey/releases/latest"><img src="https://img.shields.io/badge/⬇ 立即下载-Windows%20|%20Android-blue?style=for-the-badge" alt="下载"></a>
+  &nbsp;
+  <a href="https://github.com/XINGANLIU/word_journey"><img src="https://img.shields.io/badge/GitHub-XINGANLIU/word_journey-181717?style=for-the-badge&logo=github" alt="GitHub"></a>
+  &nbsp;
+  <a href="https://gitee.com/anbaozz/word_journey"><img src="https://img.shields.io/badge/Gitee-anbaozz/word_journey-C71D23?style=for-the-badge&logo=gitee" alt="Gitee"></a>
 </p>
 
 ---
