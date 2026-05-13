@@ -782,17 +782,9 @@ class _MeTabState extends State<_MeTab> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('word_journey.onboarded', false);
       if (mounted) {
-        // Restart to show onboarding
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => OnboardingPage(
-            onComplete: () {
-              // Re-trigger app root rebuild
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const WordJourneyHome()),
-                (route) => false,
-              );
-            },
-          )),
+        // Pop back to main and let it rebuild showing onboarding
+        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const _RestartApp()),
           (route) => false,
         );
       }
@@ -1120,6 +1112,51 @@ class _SpellingPage extends StatefulWidget {
   final PronunciationService pronunciation;
   @override
   State<_SpellingPage> createState() => _SpellingPageState();
+}
+
+// ============================================================
+// Restart helper for changing books
+// ============================================================
+class _RestartApp extends StatefulWidget {
+  const _RestartApp();
+  @override
+  State<_RestartApp> createState() => _RestartAppState();
+}
+
+class _RestartAppState extends State<_RestartApp> {
+  bool? _onboarded;
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((prefs) {
+      if (!mounted) return;
+      setState(() => _onboarded = prefs.getBool('word_journey.onboarded') ?? false);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final lightScheme = ColorScheme.fromSeed(seedColor: const Color(0xFF1B6B62), brightness: Brightness.light);
+    if (_onboarded == null) {
+      return MaterialApp(debugShowCheckedModeBanner: false, theme: ThemeData(useMaterial3: true, colorScheme: lightScheme), home: const Scaffold(body: Center(child: CircularProgressIndicator())));
+    }
+    if (!_onboarded!) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(useMaterial3: true, colorScheme: lightScheme),
+        home: OnboardingPage(
+          onComplete: () {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const WordJourneyHome()),
+              (route) => false,
+            );
+          },
+        ),
+      );
+    }
+    return const WordJourneyHome();
+  }
 }
 
 class _FilterTab extends StatelessWidget {
