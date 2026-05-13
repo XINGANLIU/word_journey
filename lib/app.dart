@@ -431,18 +431,17 @@ class _WordSelectTab extends StatefulWidget {
 
 class _WordSelectTabState extends State<_WordSelectTab> {
   final _searchCtl = TextEditingController();
+  final _scrollController = ScrollController();
   String _query = '';
   final Set<String> _selected = {};
-  int _filterMode = 0; // 0=全部 1=未选 2=已选
+  int _filterMode = 0;
+  String? _lastSwipedId; // prevent rapid toggle during swipe
 
   @override
   void dispose() {
     _searchCtl.dispose();
+    _scrollController.dispose();
     super.dispose();
-  }
-
-  void _onSearchChanged(String v) {
-    setState(() => _query = v.trim().toLowerCase());
   }
 
   void _toggleSelect(String id) {
@@ -563,10 +562,28 @@ class _WordSelectTabState extends State<_WordSelectTab> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.fromLTRB(12, 0, 12, _selected.isNotEmpty ? 80 : 16),
-                itemCount: filtered.length,
-                itemBuilder: (context, i) {
+              child: Listener(
+                onPointerMove: (event) {
+                  final scrollOffset = _scrollController.hasClients ? _scrollController.offset : 0.0;
+                  final itemHeight = _scrollController.hasClients && filtered.isNotEmpty
+                      ? (_scrollController.position.viewportDimension / (filtered.length.clamp(1, 999)).toDouble())
+                          .clamp(50.0, 80.0)
+                      : 62.0;
+                  final index = ((event.localPosition.dy + scrollOffset) / itemHeight).floor();
+                  if (index >= 0 && index < filtered.length) {
+                    final id = filtered[index].id;
+                    if (_lastSwipedId != id) {
+                      _lastSwipedId = id;
+                      _toggleSelect(id);
+                    }
+                  }
+                },
+                onPointerUp: (_) => _lastSwipedId = null,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: EdgeInsets.fromLTRB(12, 0, 12, _selected.isNotEmpty ? 80 : 16),
+                  itemCount: filtered.length,
+                  itemBuilder: (context, i) {
                   final w = filtered[i];
                   final added = studyIds.contains(w.id);
                   final sel = _selected.contains(w.id);
@@ -637,6 +654,7 @@ class _WordSelectTabState extends State<_WordSelectTab> {
                   );
                 },
               ),
+            ),
             ),
           ],
         ),
